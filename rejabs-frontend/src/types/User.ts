@@ -1,8 +1,8 @@
 export type User = {
-    githubId: string,
-    username: string,
+    id: number,
+    login: string,
     email: string | null,
-    avatarUrl: string
+    avatar_url: string
 }
 
 export interface AuthContextType {

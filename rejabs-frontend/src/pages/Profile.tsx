@@ -4,9 +4,9 @@ import {useAuth} from "../features/auth/AuthContext.tsx";
 const Profile = () => {
     const {user} = useAuth();
     const [formData, setFormData] = useState({
-        name: user.username,
+        name: user.login,
         email: user.email? user.email : "Not Available",
-        avatarUrl: user.avatarUrl,
+        avatarUrl: user.avatar_url,
     });
 
 

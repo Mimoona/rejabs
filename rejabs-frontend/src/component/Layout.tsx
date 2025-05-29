@@ -22,7 +22,7 @@ const Layout = () => {
                     <div className="flex items-center space-x-4">
                         {
                             user
-                                ? <span className="ml-4">{user.username}</span>
+                                ? <span className="ml-4">{user.login}</span>
                                 : user === null && <Link to="/signup" className="hover:underline">Signup</Link>
                         }
                         <button onClick={handleLogout} className="hover:underline">(Logout)</button>

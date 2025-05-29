@@ -18,10 +18,8 @@ public class AuthController {
         this.authService = authService;
     }
 
-
     @GetMapping()
     public AppUser getMe(@AuthenticationPrincipal OAuth2User oauthUser) {
         return authService.saveUser(oauthUser);
     }
-
 }

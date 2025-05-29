@@ -21,8 +21,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth").authenticated() // Protect specific endpoint
                         .anyRequest().permitAll()) // Allow everything else
 
-
-
                 .logout(logout -> logout
                         .logoutUrl("/api/logout") // Endpoint to call from frontend
                         .invalidateHttpSession(true)
@@ -34,7 +32,19 @@ public class SecurityConfig {
 
                 // Enable OAuth2 login with default success redirect
                 .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("http://localhost:5173/boards", true));  // true = always redirect
+                        .defaultSuccessUrl("http://localhost:5173/boards", true)) // true = always redirect
+                .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    // 👇 Detect if it's an API call (Accept: application/json or X-Requested-With: XMLHttpRequest)
+                    String accept = request.getHeader("Accept");
+                    if (accept != null && accept.contains("application/json")) {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                    } else {
+                        // Default behavior: redirect to login
+                        response.sendRedirect("/oauth2/authorization/github");
+                    }
+                })
+        );
         return http.build();
     }
 }
