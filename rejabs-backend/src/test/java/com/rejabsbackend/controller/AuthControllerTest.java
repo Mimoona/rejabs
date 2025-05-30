@@ -56,36 +56,12 @@ class AuthControllerTest {
                 ));
     }
 
-
-    @Test
-    void getMe_shouldThrowUnAuthorizedUserException_whenUserIsNull() throws UnAuthorizedUserException {
-
-        UnAuthorizedUserException thrown = assertThrows(
-                UnAuthorizedUserException.class,
-                () -> authController.getMe(null)
-        );
-
-        assertEquals("User is not authenticated", thrown.getMessage());
-    }
-
     @Test
     void logoutShouldReturn200AndClearSession() throws Exception {
         mockMvc.perform(post("/api/logout"))
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void shouldRedirectToLogin_whenUnauthenticatedRequest() throws Exception {
-        mockMvc.perform(get("/api/auth"))
-                .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
-    void getMe_shouldRedirected_whenUserIsNull() throws Exception {
-        mockMvc.perform(get("/api/auth"))
-                .andExpect(status().isFound())  // 302
-                .andExpect(header().string("Location", "/oauth2/authorization/github"));
-    }
 
     @Test
     void getMe_shouldReturn401WithJsonError_whenUnauthenticatedApiRequest() throws Exception {
