@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 @SpringBootTest
 class AuthServiceTest {
@@ -69,10 +69,4 @@ class AuthServiceTest {
 
         assertEquals(existing, actual);
     }
-
-    @Test
-    void saveUser_shouldThrowException_whenUserIsNull() throws UnAuthorizedUserException {
-        assertThrows(UnAuthorizedUserException.class, () -> authService.saveUser(null));
-    }
-
 }

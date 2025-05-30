@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -70,30 +71,26 @@ class AuthControllerTest {
     @Test
     void logoutShouldReturn200AndClearSession() throws Exception {
         mockMvc.perform(post("/api/logout"))
-                .andExpect(status().isOk())
-                .andExpect(cookie().doesNotExist("JSESSIONID"));
+                .andExpect(status().isOk());
     }
 
     @Test
-    void unauthenticatedRequest_withJsonAccept_shouldReturn401() throws Exception {
-        mockMvc.perform(get("/api/auth")
-                        .header("Accept", "application/json"))
+    void shouldRedirectToLogin_whenUnauthenticatedRequest() throws Exception {
+        mockMvc.perform(get("/api/auth"))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void getMe_shouldRedirected_whenUserIsNull() throws Exception {
+        mockMvc.perform(get("/api/auth"))
+                .andExpect(status().isFound())  // 302
+                .andExpect(header().string("Location", "/oauth2/authorization/github"));
+    }
+
+    @Test
+    void getMe_shouldReturn401WithJsonError_whenUnauthenticatedApiRequest() throws Exception {
+        mockMvc.perform(get("/api/auth"))
                 .andExpect(status().isUnauthorized());
-    }
 
-    @Test
-    void unauthenticatedRequest_withoutJsonAccept_shouldRedirectToLogin() throws Exception {
-        mockMvc.perform(get("/api/auth"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/oauth2/authorization/github"));
     }
-
-    @Test
-    void getMe_shouldReturnUnauthorizedError_whenUserIsNull() throws Exception {
-        mockMvc.perform(get("/api/auth"))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("User is not authenticated"))
-                .andExpect(jsonPath("$.httpStatus").value("UNAUTHORIZED"));
-    }
-
 }

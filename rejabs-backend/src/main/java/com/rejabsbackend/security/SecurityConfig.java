@@ -3,10 +3,12 @@ package com.rejabsbackend.security;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
@@ -43,15 +45,8 @@ public class SecurityConfig {
 
                 .oauth2Login(oauth -> oauth
                         .defaultSuccessUrl("http://localhost:5173/boards", true))
-                .exceptionHandling(exception -> exception
-                .authenticationEntryPoint((request, response, authException) -> {
-                    String accept = request.getHeader("Accept");
-                    if (accept != null && accept.contains("application/json")) {
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                    } else {
-                        response.sendRedirect("/oauth2/authorization/github");
-                    }
-                })
+                .exceptionHandling(error -> error
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         );
         return http.build();
     }

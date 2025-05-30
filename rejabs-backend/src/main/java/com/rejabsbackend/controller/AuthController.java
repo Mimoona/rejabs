@@ -19,10 +19,6 @@ public class AuthController {
 
     @GetMapping()
     public AppUser getMe(@AuthenticationPrincipal OAuth2User oAuth2User) throws UnAuthorizedUserException {
-        if (oAuth2User == null) {
-            throw new UnAuthorizedUserException("User is not authenticated");
-        }
-
         return authService.saveUser(oAuth2User);
     }
 }
