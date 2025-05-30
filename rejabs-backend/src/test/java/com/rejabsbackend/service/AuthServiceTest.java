@@ -68,9 +68,7 @@ class AuthServiceTest {
         AppUser actual = authService.saveUser(user);
 
         assertEquals(existing, actual);
-
     }
-
 
     @Test
     void saveUser_shouldThrowException_whenUserIsNull() throws UnAuthorizedUserException {

@@ -18,10 +18,7 @@ public class AuthService {
     }
 
     public AppUser saveUser(OAuth2User oAuth2User) throws UnAuthorizedUserException {
-        if (oAuth2User == null) {
-            throw new UnAuthorizedUserException("User is not authenticated");
-        }
-        Map<String, Object> attributes = oAuth2User.getAttributes();  //  getAttributes bring whole Object
+       Map<String, Object> attributes = oAuth2User.getAttributes();  //  getAttributes bring whole Object
 
         Integer id = attributes.get("id") != null ? ((Number) attributes.get("id")).intValue() : 0;
         String username =  attributes.get("login") != null ? (String) attributes.get("login"): null;
