@@ -24,9 +24,9 @@ public class AuthService {
         Map<String, Object> attributes = oAuth2User.getAttributes();  //  getAttributes bring whole Object
 
         Integer id = attributes.get("id") != null ? ((Number) attributes.get("id")).intValue() : 0;
-        String username =  attributes.get("login") != null ? (String) attributes.get("login"): "Not available";
-        String email = attributes.get("email") != null ? attributes.get("email").toString() : "Not available";
-        String avatarUrl = attributes.get("avatar_url") != null ? (String) attributes.get("avatar_url"): "Not available";
+        String username =  attributes.get("login") != null ? (String) attributes.get("login"): null;
+        String email = attributes.get("email") != null ? attributes.get("email").toString() : null;
+        String avatarUrl = attributes.get("avatar_url") != null ? (String) attributes.get("avatar_url"): null;
 
         // If user exist already in DB
         Optional<AppUser> existingUser = appUserRepo.findById(id.toString());

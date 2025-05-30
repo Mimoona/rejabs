@@ -7,6 +7,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -15,6 +18,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of("http://localhost:5173"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 // Disable CSRF for APIs or frontend integration
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -25,22 +36,19 @@ public class SecurityConfig {
                         .logoutUrl("/api/logout") // Endpoint to call from frontend
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK); // Simple success response
-                        })
+                        .logoutSuccessHandler((request, response, authentication) ->
+                            response.setStatus(HttpServletResponse.SC_OK) // Simple success response
+                        )
                 )
 
-                // Enable OAuth2 login with default success redirect
                 .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("http://localhost:5173/boards", true)) // true = always redirect
+                        .defaultSuccessUrl("http://localhost:5173/boards", true))
                 .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
-                    // 👇 Detect if it's an API call (Accept: application/json or X-Requested-With: XMLHttpRequest)
                     String accept = request.getHeader("Accept");
                     if (accept != null && accept.contains("application/json")) {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                     } else {
-                        // Default behavior: redirect to login
                         response.sendRedirect("/oauth2/authorization/github");
                     }
                 })

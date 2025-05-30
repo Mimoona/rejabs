@@ -1,5 +1,6 @@
 package com.rejabsbackend.controller;
 
+import com.rejabsbackend.exception.UnAuthorizedUserException;
 import com.rejabsbackend.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -21,9 +25,12 @@ class AuthControllerTest {
     @Autowired
     private AuthService mockAuthService;
 
+    @Autowired
+    private AuthController authController;
+
     @Test
     @DirtiesContext
-    void getMe() throws Exception {
+    void getMe_shouldReturnUser_whenAuthenticated() throws Exception {
         mockMvc.perform(get("/api/auth")
                         .with(oidcLogin().userInfoToken(token -> token
                                         .claim("id", 1234)
@@ -36,15 +43,28 @@ class AuthControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().json("""
-                        {
-                                                        "id": 1234,
-                                                        "login": "testUser",
-                                                        "email": "mock@example.com",
-                                                "avatar_url": "http://image.png"
-                                        
-                        }
+                         {
+                                                         "id": 1234,
+                                                         "login": "testUser",
+                                                         "email": "mock@example.com",
+                                                         "avatar_url": "http://image.png"
+                                         
+                         }
 
-                       """
+                        """
                 ));
     }
+
+
+        @Test
+        void getMe_shouldThrowUnAuthorizedUserException_whenUserIsNull() throws UnAuthorizedUserException{
+            // Arrange
+            UnAuthorizedUserException thrown = assertThrows(
+                    UnAuthorizedUserException.class,
+                    () -> authController.getMe(null)
+            );
+
+            assertEquals("User is not authenticated", thrown.getMessage());
+        }
+
 }

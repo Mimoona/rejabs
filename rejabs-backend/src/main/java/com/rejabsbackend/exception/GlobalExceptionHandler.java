@@ -11,7 +11,7 @@ import java.time.Instant;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnAuthorizedUserException.class)
-    public ResponseEntity<ExceptionMessage> handleUnauthenticatedUser(UnAuthorizedUserException e) {
+    public ResponseEntity<ExceptionMessage> handleUnauthorizedUserException(UnAuthorizedUserException e) {
         ExceptionMessage error = new ExceptionMessage(e.getMessage(),
                 Instant.now(),
                 HttpStatus.UNAUTHORIZED.name());

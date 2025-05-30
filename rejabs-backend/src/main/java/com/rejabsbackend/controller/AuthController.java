@@ -1,9 +1,8 @@
 package com.rejabsbackend.controller;
 
+import com.rejabsbackend.exception.UnAuthorizedUserException;
 import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.service.AuthService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ public class AuthController {
     }
 
     @GetMapping()
-    public AppUser getMe(@AuthenticationPrincipal OAuth2User oauthUser) {
+    public AppUser getMe(@AuthenticationPrincipal OAuth2User oauthUser) throws UnAuthorizedUserException {
         return authService.saveUser(oauthUser);
     }
 }

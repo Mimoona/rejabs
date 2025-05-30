@@ -4,7 +4,6 @@ import com.rejabsbackend.exception.UnAuthorizedUserException;
 import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.repo.AppUserRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -29,7 +28,6 @@ class AuthServiceTest {
                 Collections.emptyList(),
                 //if have roles
                // List.of(new SimpleGrantedAuthority("ROLE_USER"))
-
                 attributes,
                 "login"
         );
@@ -59,9 +57,6 @@ class AuthServiceTest {
         AppUser existing = new AppUser(1234, "existingUser", "exist@example.com", "http://avatar.png");
         mockAppUserRepo.save(existing);
 
-        String id = existing.id().toString();
-        //Mockito.when(mockAppUserRepo.findById(id)).thenReturn(Optional.of(existing));
-
         Map<String, Object> attributes = Map.of(
                 "id", 1234,
                 "login", "existingUser",
@@ -78,7 +73,7 @@ class AuthServiceTest {
 
 
     @Test
-    void saveUser_shouldThrowException_whenUserIsNull() {
+    void saveUser_shouldThrowException_whenUserIsNull() throws UnAuthorizedUserException {
         assertThrows(UnAuthorizedUserException.class, () -> authService.saveUser(null));
     }
 
