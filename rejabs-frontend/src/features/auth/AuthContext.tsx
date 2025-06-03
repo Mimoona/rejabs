@@ -4,7 +4,7 @@ import type {AuthContextType, User} from "../../types/User.ts";
 
 
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState<User | undefined | null>(undefined);
@@ -65,4 +65,8 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) throw new Error("AuthContext is not wrapped by AuthContextProvider");
+    return context;
+}
