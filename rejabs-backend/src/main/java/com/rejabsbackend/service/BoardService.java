@@ -1,6 +1,7 @@
 package com.rejabsbackend.service;
 
 import com.rejabsbackend.dto.BoardDto;
+import com.rejabsbackend.exception.AuthenticationException;
 import com.rejabsbackend.exception.IdNotFoundException;
 import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.model.Board;
@@ -62,14 +63,14 @@ public class BoardService {
         return false;
     }
 
-    public Board getBoardIfOwner(String boardId) throws IdNotFoundException {
+    public Board getBoardIfOwner(String boardId) throws IdNotFoundException, AuthenticationException{
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IdNotFoundException(boardId, "Board"));
 
         String currentUserId = authService.getCurrentUserId();
 
         if (!board.ownerId().equals(currentUserId)) {
-            throw new IdNotFoundException(boardId, "BoardUser");
+            throw new AuthenticationException("User is not the owner of the board");
         }
 
         return board;

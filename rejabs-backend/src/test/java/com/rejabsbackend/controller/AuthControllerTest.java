@@ -1,17 +1,12 @@
 package com.rejabsbackend.controller;
 
-import com.rejabsbackend.exception.UnAuthorizedUserException;
 import com.rejabsbackend.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -22,12 +17,6 @@ class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private AuthService mockAuthService;
-
-    @Autowired
-    private AuthController authController;
 
     @Test
     @DirtiesContext

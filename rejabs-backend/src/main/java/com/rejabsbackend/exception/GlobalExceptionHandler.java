@@ -13,7 +13,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionMessage> handleUnknownException(Exception e){
-        ExceptionMessage error = new ExceptionMessage("Error: " + e.getMessage(),
+        e.printStackTrace();
+        ExceptionMessage error = new ExceptionMessage( e.getMessage(),
                 Instant.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.name());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR );
@@ -21,19 +22,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IdNotFoundException.class)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(IdNotFoundException e){
-        ExceptionMessage error = new ExceptionMessage("Error: "+e.getMessage(),
+        e.printStackTrace();
+        ExceptionMessage error = new ExceptionMessage(e.getMessage(),
                 Instant.now(),
                 HttpStatus.NOT_FOUND.name());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(UnAuthorizedUserException.class)
-    public ResponseEntity<ExceptionMessage> handleUnAuthorizedUserException(UnAuthorizedUserException e){
-        ExceptionMessage error = new ExceptionMessage("Error: "+e.getMessage(),
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ExceptionMessage> handleAuthenticationException(AuthenticationException e){
+        e.printStackTrace();
+        ExceptionMessage error = new ExceptionMessage(e.getMessage(),
                 Instant.now(),
                 HttpStatus.NOT_FOUND.name());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
 
 
 

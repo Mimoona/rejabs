@@ -1,6 +1,5 @@
 package com.rejabsbackend.service;
 
-import com.rejabsbackend.exception.UnAuthorizedUserException;
 import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.repo.AppUserRepository;
 import org.junit.jupiter.api.Test;

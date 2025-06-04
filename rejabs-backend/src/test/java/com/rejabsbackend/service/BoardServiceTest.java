@@ -1,22 +1,18 @@
 package com.rejabsbackend.service;
 
 import com.rejabsbackend.dto.BoardDto;
+import com.rejabsbackend.exception.AuthenticationException;
 import com.rejabsbackend.exception.IdNotFoundException;
-import com.rejabsbackend.exception.UnAuthorizedUserException;
 import com.rejabsbackend.model.Board;
 import com.rejabsbackend.repo.BoardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.data.annotation.Id;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 
 class BoardServiceTest {
 
@@ -30,21 +26,22 @@ class BoardServiceTest {
     private BoardDto createBoardDto;
     private BoardDto boardDto;
     private Board updatedBoard;
-    private final String BOARD_ID = "board123";
-    private final String USER_ID = "user123";
+    private final String boardId = "board123";
+    private final String userId = "user123";
+    private static final String DIFFERENT_USER_ID = "differentUser123";
 
     @BeforeEach
     void setUp() {
 
-        board = new Board(BOARD_ID, "Original Title", USER_ID, List.of("user1", "user2"));
+        board = new Board(boardId, "Original Title", userId , List.of("user1", "user2"));
 
         // for CreateBoard Method
-        createBoardDto = new BoardDto("Original Title", USER_ID, List.of("user1", "user2"));
+        createBoardDto = new BoardDto("Original Title", List.of("user1", "user2"));
 
         // for UpdateBoard method
-        boardDto = new BoardDto("Updated Title", USER_ID, List.of("user3", "user4"));
+        boardDto = new BoardDto("Updated Title", List.of("user3", "user4"));
 
-        updatedBoard = new Board(BOARD_ID, "Updated Title", USER_ID, List.of("user3", "user4"));
+        updatedBoard = new Board(boardId, "Updated Title", userId , List.of("user3", "user4"));
         boardService = new BoardService(boardRepository, idService, authService);
 
     }
@@ -100,112 +97,149 @@ class BoardServiceTest {
 
     @Test
     void createBoard_shouldReturnBoard_whenCalledWithValidData() {
-        // Given
+        // When
         Mockito.when(idService.generateId()).thenReturn("board123");
         Mockito.when(boardRepository.save(board)).thenReturn(board);
-        Mockito.when(authService.getCurrentUserId()).thenReturn(USER_ID);
-
-        // When
-        Board actual = boardService.createBoard(createBoardDto);
+        Mockito.when(authService.getCurrentUserId()).thenReturn(userId );
 
         // Then
-        assertEquals(board, actual);
+        Board actual = boardService.createBoard(createBoardDto);
+
         Mockito.verify(boardRepository, Mockito.times(1)).save(board);
+        assertEquals(board, actual);
+
     }
 
     @Test
-    void updateBoard_shouldUpdateBoard_whenUserIsOwnerAndBoardFound() throws IdNotFoundException, UnAuthorizedUserException {
+    void updateBoard_shouldUpdateBoard_whenUserIsOwnerAndBoardFound() throws IdNotFoundException, AuthenticationException {
         //Given
 
         // when
-        Mockito.when(authService.getCurrentUserId()).thenReturn(USER_ID);
-        Mockito.when(boardRepository.findById(BOARD_ID)).thenReturn(Optional.of(board));
+        Mockito.when(authService.getCurrentUserId()).thenReturn(userId );
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
         Mockito.when(boardRepository.save(updatedBoard)).thenReturn(updatedBoard);
 
         // then
-        Board actualBoard = boardService.updateBoard(BOARD_ID, boardDto);
+        Board actualBoard = boardService.updateBoard(boardId, boardDto);
         assertNotNull(actualBoard);
         assertEquals(updatedBoard, actualBoard);
 
-        Mockito.verify(boardRepository).findById(BOARD_ID);
+        Mockito.verify(boardRepository).findById(boardId);
         Mockito.verify(boardRepository).save(updatedBoard);
         Mockito.verify(authService).getCurrentUserId();
     }
 
 
     @Test
-    void updateBoard_shouldThrowIdNotFoundException_whenBoardNotFound() throws IdNotFoundException {
+    void updateBoard_shouldThrowIdNotFoundException_whenBoardNotFound() {
 
         //when
-        Mockito.when(boardRepository.findById(BOARD_ID)).thenReturn(Optional.empty());
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.empty());
 
         //then
-        assertThrows(IdNotFoundException.class, () -> boardService.updateBoard(BOARD_ID, boardDto));
+        assertThrows(IdNotFoundException.class, () -> boardService.updateBoard(boardId, boardDto));
 
-        Mockito.verify(boardRepository).findById(BOARD_ID);
+        Mockito.verify(boardRepository).findById(boardId);
     }
 
     @Test
-    void updateBoard_shouldThrowUnauthorizedException_whenUserNotOwner() throws UnAuthorizedUserException {
+    void updateBoard_shouldThrowAuthenticationException_whenUserNotOwner() throws AuthenticationException {
 
-        Board boardWithDifferentOwner = new Board(BOARD_ID, "Original Title", "differentUser", List.of("user1", "user2"));
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
+        Mockito.when(authService.getCurrentUserId()).thenReturn(DIFFERENT_USER_ID);
 
-        Mockito.when(boardRepository.findById(BOARD_ID)).thenReturn(Optional.of(boardWithDifferentOwner));
-        Mockito.when(authService.getCurrentUserId()).thenReturn(USER_ID);
+        AuthenticationException exception = assertThrows(AuthenticationException.class, () -> boardService.updateBoard(boardId, boardDto));
 
-        assertThrows(UnAuthorizedUserException.class, () -> boardService.updateBoard(BOARD_ID, boardDto));
+        Mockito.verify(boardRepository).findById(boardId);
+        Mockito.verify(authService).getCurrentUserId();
 
-        Mockito.verify(boardRepository).findById(BOARD_ID);
+        assertEquals("User is not the owner of the board", exception.getMessage());
+
     }
 
 
     @Test
     void deleteBoardById_shouldDeleteBoard_whenCalledWithValidId() throws IdNotFoundException {
 
-        Mockito.when(boardRepository.findById(BOARD_ID)).thenReturn(Optional.of(board));
-        Mockito.when(authService.getCurrentUserId()).thenReturn(USER_ID);
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
+        Mockito.when(authService.getCurrentUserId()).thenReturn(userId );
 
-        boolean actualBoard = boardService.deleteBoardById(BOARD_ID);
+        boolean actualBoard = boardService.deleteBoardById(boardId);
 
         // then
         assertTrue(actualBoard);
 
-        Mockito.verify(boardRepository).findById(BOARD_ID);
+        Mockito.verify(boardRepository).findById(boardId);
         Mockito.verify(boardRepository).delete(board);
         Mockito.verify(authService).getCurrentUserId();
 
     }
 
     @Test
-    void deleteBoardById_shouldThrowIdNotFoundException_whenCalledWithInvalidId() throws IdNotFoundException {
+    void deleteBoardById_shouldThrowIdNotFoundException_whenCalledWithInvalidId() {
+        String notFoundBoardId = "missing-123";
         //when
-        Mockito.when(boardRepository.findById(BOARD_ID)).thenReturn(Optional.of(board));
+        Mockito.when(boardRepository.findById(notFoundBoardId)).thenReturn(Optional.empty());
         //then
-        assertThrows(IdNotFoundException.class, () -> boardService.deleteBoardById(BOARD_ID));
+        assertThrows(IdNotFoundException.class, () -> boardService.deleteBoardById(boardId));
 
-        Mockito.verify(boardRepository).findById(BOARD_ID);
+        Mockito.verify(boardRepository).findById(boardId);
     }
 
     @Test
-    void deleteBoardById_shouldThrowUnAuthorizedUserException_whenCalledWithInvalidOwner() {
-        Mockito.when(authService.getCurrentUserId()).thenReturn(USER_ID);
+    void deleteBoardById_shouldThrowAuthenticationException_whenCalledWithInvalidOwner() throws AuthenticationException{
+        String invalidUser = "invalidUser";
+        Mockito.when(boardRepository.findById(board.boardId())).thenReturn(Optional.of(board));
+        Mockito.when(authService.getCurrentUserId()).thenReturn(invalidUser);
 
-        assertThrows(UnAuthorizedUserException.class, () -> boardService.deleteBoardById(BOARD_ID));
+        Mockito.verify(boardRepository, never()).deleteById(boardId);
+        assertThrows(AuthenticationException.class, () -> boardService.deleteBoardById(boardId));
+
+
+    }
+
+
+    @Test
+    void getBoardIfOwner_shouldThrownException_whenCalledWithValidBoardId() {
+        String differentOwner = "Differnt owner";
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
+        Mockito.when(authService.getCurrentUserId()).thenReturn(differentOwner);
+
+        AuthenticationException e= assertThrows(AuthenticationException.class, () -> boardService.getBoardIfOwner(boardId));
+        assertEquals("User is not the owner of the board", e.getMessage());
+
+        Mockito.verify(boardRepository).findById(boardId);
         Mockito.verify(authService).getCurrentUserId();
-
     }
 
 
     @Test
-    void getBoardIfOwner_shouldThrownException_whenCalledWithValidId() throws IdNotFoundException, UnAuthorizedUserException {
-        Mockito.when(boardRepository.findById(BOARD_ID)).thenReturn(Optional.of(board));
-        Mockito.when(authService.getCurrentUserId()).thenReturn(null);
+    void getBoardIfOwner_shouldReturnBoard_whenUserIsOwner() throws IdNotFoundException{
+        // when
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
+        Mockito.when(authService.getCurrentUserId()).thenReturn(userId );
 
-        assertThrows(IdNotFoundException.class, () -> boardService.getBoardIfOwner(BOARD_ID));
-        assertThrows(UnAuthorizedUserException.class, () -> boardService.getBoardIfOwner(BOARD_ID));
+        Board result = boardService.getBoardIfOwner(boardId);
+
+        // then
+        assertNotNull(result);
+        assertEquals(boardId, result.boardId());
+        assertEquals(userId , result.ownerId());
 
         // Verify
-        Mockito.verify(boardRepository).findById(BOARD_ID);
+        Mockito.verify(boardRepository).findById(boardId);
         Mockito.verify(authService).getCurrentUserId();
+    }
+
+    @Test
+    void getBoardIfOwner_shouldThrowNotFoundException_whenBoardNotFound() {
+        // When
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.empty());
+
+        assertThrows(IdNotFoundException.class, () -> boardService.getBoardIfOwner(boardId));
+
+        // Verify
+        Mockito.verify(boardRepository).findById(boardId);
+        Mockito.verify(authService, never()).getCurrentUserId();
     }
 }

@@ -2,21 +2,24 @@ package com.rejabsbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rejabsbackend.dto.BoardDto;
+import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.model.Board;
+import com.rejabsbackend.repo.AppUserRepository;
 import com.rejabsbackend.repo.BoardRepository;
-import com.rejabsbackend.service.AuthService;
-import com.rejabsbackend.service.BoardService;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.List;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -31,49 +34,43 @@ class BoardControllerTest {
 
     @Autowired
     private BoardRepository boardRepository;
-    private final String BOARD_ID = "board123";
-    private final String USER_ID = "user123";
 
-//    @Autowired
-//    private BoardService boardService;
-//
-//    @Autowired
-//    private AuthService authService;
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     ObjectMapper objectMapper = new ObjectMapper();
+    AppUser user;
+    Board board;
+    BoardDto boardDto;
+    BoardDto updateDto;
+    Board updatedBoard;
 
 
-//    String boardJson = """
-//                        {
-//                            "id": "1",
-//                            "title": "Project A",
-//                            "ownerId": "owner123",
-//                            "collaborators": ["user1", "user2"]
-//                        }
-//            """;
-//
-//    String boardDtoJson= """
-//                        {
-//                            "title": "Project A",
-//                            "ownerId": "owner123",
-//                            "collaborators": ["user1", "user2"]
-//                        }
-//            """;
-//
-//    String boardArray= """
-//                      [{
-//                            "id": "1",
-//                            "title": "Project A",
-//                            "ownerId": "owner123",
-//                            "collaborators": ["user1", "user2"]
-//                        }]
-//            """;
+    @BeforeEach
+    void setUp() {
+        user = new AppUser(1234, "testUser", "mock@example.com", "http://image.png");
 
+        board = new Board("board123", "Project A", "1234", List.of("user1", "user2"));
 
+        // for Create Method
+        boardDto = new BoardDto("Project A", List.of("user1", "user2"));
 
-    Board board= new Board ("1", "Project A", "owner123", List.of("user1", "user2"));
+        // for Update method
+        updateDto = new BoardDto("Project A schema", board.collaborators());
+        updatedBoard = new Board("board123", "Project A schema", board.ownerId(), board.collaborators());
 
-    BoardDto boardDto = new BoardDto("Project A","owner123", List.of("user1", "user2"));
+        appUserRepository.save(user);
+
+    }
+
+    protected RequestPostProcessor getOidcLogin() {
+        return oidcLogin().userInfoToken(token -> token
+                .claim("id", 1234)
+                .claim("login", "testUser")
+                .claim("email", "mock@example.com")
+                .claim("avatar_url", "http://image.png")
+        );
+    }
 
 
     @Test
@@ -84,8 +81,6 @@ class BoardControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(board))));
     }
 
-
-
     @Test
     void getAllBoards_shouldReturnEmptyList_whenCalled() throws Exception {
         mockMvc.perform(get("/api/boards"))
@@ -94,62 +89,62 @@ class BoardControllerTest {
     }
 
     @Test
-    void getBoardById_shouldReturnBoard_whenCalledWithValidId() throws Exception{
+    void getBoardById_shouldReturnBoard_whenCalledWithValidId() throws Exception {
         boardRepository.save(board);
-        mockMvc.perform(get("/api/boards"+board.boardId()))
+        mockMvc.perform(get("/api/boards/"+board.boardId()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(board)));
     }
 
     @Test
-    void getBoardById_shouldThrowException_whenCalledWithInvalidId() throws Exception{
-        boardRepository.save(board);
-        mockMvc.perform(get("/api/boards"+board.boardId()))
+    void getBoardById_shouldThrowException_whenCalledWithInvalidId() throws Exception {
+        String invalidId = "xyz22";
+        mockMvc.perform(get("/api/boards/"+invalidId))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("id not found"));
+                .andExpect(jsonPath("$.error").value("Board Id " + invalidId + " not found"));
     }
 
 
     @Test
-    void createBoard_shouldReturnNewBoard_whenCalledWithBoardDto() throws Exception{
-
+    void createBoard_shouldReturnNewBoard_whenCalledWithBoardDto() throws Exception {
         mockMvc.perform(post("/api/boards")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(boardDto)))
+                        .content(objectMapper.writeValueAsString(boardDto))
+                        .with(getOidcLogin()))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(board)));
+                .andExpect(jsonPath("$.boardId").isNotEmpty())
+                .andExpect(content().json(objectMapper.writeValueAsString(boardDto)));
+
     }
 
     @Test
-    void updateBoard_shouldReturnBoard_whenCalledWithValidBoardDto() throws Exception{
-        BoardDto updatedBoardDto = new BoardDto("Project A schema", board.ownerId(), board.collaborators());
+    void updateBoard_shouldReturnBoard_whenCalledWithValidBoardDto() throws Exception {
         boardRepository.save(board);
         //When
         mockMvc.perform(put("/api/boards/"+board.boardId())
+
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedBoardDto))
-                )
+                        .content(objectMapper.writeValueAsString(updateDto))
+                        .with(getOidcLogin()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.boardId").isNotEmpty())
-                .andExpect(jsonPath("$.title").value(updatedBoardDto.title()))
-                .andExpect(jsonPath("$.ownerId").value(board.ownerId()))
-                .andExpect(jsonPath("$.collaborators").value(board.collaborators()));
+                .andExpect(content().json(objectMapper.writeValueAsString(updatedBoard)));
     }
 
     @Test
-    void deleteBoard_shouldDeleteBoard_whenCalledWithIValidId() throws Exception{
+    void deleteBoard_shouldDeleteBoard_whenCalledWithValidId() throws Exception {
         boardRepository.save(board);
         //when
-        mockMvc.perform(delete("/api/boards/"+board.boardId()))
+        mockMvc.perform(delete("/api/boards/" + board.boardId())
+                        .with(getOidcLogin()))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void deleteBoard_shouldThrowException_whenCalledWithInvalidId() throws Exception{
+    void deleteBoard_shouldThrowException_whenCalledWithInvalidId() throws Exception {
         String invalidId = "xyz22";
         //when
         mockMvc.perform(delete("/api/boards/"+invalidId))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("Error: Board Id " + invalidId + " not found"));
+                .andExpect(jsonPath("$.error").value("Board Id " + invalidId + " not found"));
     }
 }
