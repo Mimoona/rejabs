@@ -1,16 +1,21 @@
 package com.rejabsbackend.service;
 
+import com.rejabsbackend.exception.AuthenticationException;
 import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.repo.AppUserRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.hamcrest.Matchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest

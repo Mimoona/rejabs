@@ -195,7 +195,7 @@ class BoardServiceTest {
     }
 
     @Test
-    void updateBoard_whenCollaboratorsNull_shouldRetainExistingCollaborators() throws IdNotFoundException{
+    void updateBoard_shouldRetainExistingCollaborators_whenCollaboratorsNull() throws IdNotFoundException{
         // Given
 
         List<Collaborator> originalCollaborators = List.of(
@@ -213,6 +213,26 @@ class BoardServiceTest {
         // Then
         Mockito.verify(boardRepository).save(argThat(updated ->
                 updated.collaborators().equals(originalCollaborators)
+        ));
+    }
+    @Test
+    void updateBoard_shouldRetainExistingTitle_whenTitleNull() throws IdNotFoundException{
+        // Given
+        List<Collaborator> originalCollaborators = List.of(
+                new Collaborator("2", "Bob", "bob@example.com", null)
+        );
+        Board existing = new Board(boardId, "existingTitle", "owner1", originalCollaborators);
+        BoardDto dto = new BoardDto(null, originalCollaborators);
+
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(existing));
+        Mockito.when(authService.getCurrentUserId()).thenReturn("owner1");
+
+        // When
+        boardService.updateBoard(boardId, dto);
+
+        // Then
+        Mockito.verify(boardRepository).save(argThat(updated ->
+                updated.title().equals("existingTitle")
         ));
     }
 
