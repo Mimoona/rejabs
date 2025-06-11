@@ -174,7 +174,7 @@ class BoardServiceTest {
     @Test
     void updateBoard_shouldUseNewCollaborators_whenCollaboratorsProvided_() throws IdNotFoundException, AuthenticationException{
         // Given
-        String boardId = "b123";
+
         Board existing = new Board(boardId, "Old Title", "owner1", List.of());
         Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(existing));
         Mockito.when(authService.getCurrentUserId()).thenReturn("owner1");
@@ -197,7 +197,7 @@ class BoardServiceTest {
     @Test
     void updateBoard_whenCollaboratorsNull_shouldRetainExistingCollaborators() throws IdNotFoundException{
         // Given
-        String boardId = "b123";
+
         List<Collaborator> originalCollaborators = List.of(
                 new Collaborator("2", "Bob", "bob@example.com", null)
         );
