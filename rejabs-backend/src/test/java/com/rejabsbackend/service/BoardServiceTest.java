@@ -4,6 +4,7 @@ import com.rejabsbackend.dto.BoardDto;
 import com.rejabsbackend.exception.AuthenticationException;
 import com.rejabsbackend.exception.IdNotFoundException;
 import com.rejabsbackend.model.Board;
+import com.rejabsbackend.model.Collaborator;
 import com.rejabsbackend.repo.BoardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,15 +34,23 @@ class BoardServiceTest {
     @BeforeEach
     void setUp() {
 
-        board = new Board(boardId, "Original Title", userId , List.of("user1", "user2"));
+        board = new Board(boardId, "Original Title", userId , List.of(
+                new Collaborator("collab1", "John Doe", "john@example.com", "avatar1.jpg")
+        ));
 
         // for CreateBoard Method
-        createBoardDto = new BoardDto("Original Title", List.of("user1", "user2"));
+        createBoardDto = new BoardDto("Original Title", List.of(
+                new Collaborator("collab1", "John Doe", "john@example.com", "avatar1.jpg")
+        ));
 
         // for UpdateBoard method
-        boardDto = new BoardDto("Updated Title", List.of("user3", "user4"));
+        boardDto = new BoardDto("Updated Title", List.of(
+                new Collaborator("collab2", "Max", "max@example.com", "avatar2.jpg")
+        ));
 
-        updatedBoard = new Board(boardId, "Updated Title", userId , List.of("user3", "user4"));
+        updatedBoard = new Board(boardId, "Updated Title", userId , List.of(
+                new Collaborator("collab2", "Max", "max@example.com", "avatar2.jpg")
+        ));
         boardService = new BoardService(boardRepository, idService, authService);
 
     }

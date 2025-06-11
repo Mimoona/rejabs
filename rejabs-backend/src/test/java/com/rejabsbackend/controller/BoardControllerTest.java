@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rejabsbackend.dto.BoardDto;
 import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.model.Board;
+import com.rejabsbackend.model.Collaborator;
 import com.rejabsbackend.repo.AppUserRepository;
 import com.rejabsbackend.repo.BoardRepository;
 
@@ -50,10 +51,14 @@ class BoardControllerTest {
     void setUp() {
         user = new AppUser(1234, "testUser", "mock@example.com", "http://image.png");
 
-        board = new Board("board123", "Project A", "1234", List.of("user1", "user2"));
+        board = new Board("board123", "Project A", "1234", List.of(
+                new Collaborator("collab1", "John Doe", "john@example.com", "avatar1.jpg")
+        ));
 
         // for Create Method
-        boardDto = new BoardDto("Project A", List.of("user1", "user2"));
+        boardDto = new BoardDto("Project A", List.of(
+                new Collaborator("collab1", "John Doe", "john@example.com", "avatar1.jpg")
+        ));
 
         // for Update method
         updateDto = new BoardDto("Project A schema", board.collaborators());

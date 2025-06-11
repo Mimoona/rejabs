@@ -12,5 +12,5 @@ public record Board(
         String boardId,
         String title,
         String ownerId,
-        List<String> collaborators) {
+        List<Collaborator> collaborators) {
 }

@@ -6,6 +6,7 @@ import Home from "./pages/Home.tsx";
 import Login from "./pages/Login.tsx";
 import Profile from "./pages/Profile.tsx";
 import Boards from "./pages/Boards.tsx";
+import Template from "./pages/Template.tsx";
 
 function App() {
 
@@ -16,7 +17,8 @@ function App() {
             <Route path="/" element={<Layout/>}>
                 <Route element={<ProtectedRoute/>}>
                     <Route path="profile" element={<Profile/>}/>
-                    <Route path="boards" element={<Boards/>}/>
+                    <Route path="boards" element={<Template/>}/>
+                    <Route path="/boards/:id" element={<Boards/>}/>
                 </Route>
             </Route>
         </Routes>

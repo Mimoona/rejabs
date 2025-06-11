@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import {useAuth} from "../features/auth/AuthContext.tsx";
+import {useAuth} from "../hooks/useAuth.ts";
 
 const Profile = () => {
     const {user} = useAuth();
     const [formData, setFormData] = useState({
-        name: user.login,
-        email: user.email? user.email : "Not Available",
-        avatarUrl: user.avatar_url,
+        name: user?.login,
+        email: user?.email?? "Not Available",
+        avatarUrl: user?.avatar_url,
     });
 
 
@@ -20,7 +20,7 @@ const Profile = () => {
         <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow-md">
             <div className="flex flex-col items-center mb-6">
                 <img
-                    src={formData.avatarUrl || '/default-avatar.png'}
+                    src={formData.avatarUrl?? '/default-avatar.png'}
                     alt="Avatar"
                     className="w-32 h-32 rounded-full object-cover border"
                 />

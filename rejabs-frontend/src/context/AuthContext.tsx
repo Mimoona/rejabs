@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import api from "../../api/axios.ts";
-import type {AuthContextType, User} from "../../types/User.ts";
+import {createContext, useEffect, useMemo, useState} from "react";
+import api from "../api/axios.ts";
+import type {AuthContextType, User} from "../types/User.ts";
 
 
 
@@ -58,15 +58,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Wrap the context value in useMemo
+    const value = useMemo(
+        () => ({
+            user,
+            setUser,
+            login,
+            logout,
+            isLoading,
+        }),
+        [user, isLoading] // Dependencies array includes all values that should trigger a recalculation
+    );
+
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout}}>
+        <AuthContext.Provider value={value}>
             {isLoading ? <div>Loading...</div> :children}
         </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) throw new Error("AuthContext is not wrapped by AuthContextProvider");
-    return context;
-}

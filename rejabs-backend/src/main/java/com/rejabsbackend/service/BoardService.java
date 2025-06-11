@@ -3,10 +3,12 @@ package com.rejabsbackend.service;
 import com.rejabsbackend.dto.BoardDto;
 import com.rejabsbackend.exception.AuthenticationException;
 import com.rejabsbackend.exception.IdNotFoundException;
-import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.model.Board;
+import com.rejabsbackend.model.Collaborator;
 import org.springframework.stereotype.Service;
 import com.rejabsbackend.repo.BoardRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,10 +34,12 @@ public class BoardService {
     }
 
     public Board createBoard(BoardDto boardDto) {
+
+        List<Collaborator> collaborators = checkCollaborators(boardDto.collaborators());
         Board newBoard = new Board(idService.generateId(),
                 boardDto.title(),
                 authService.getCurrentUserId(),
-                boardDto.collaborators());
+                collaborators);
         boardRepository.save(newBoard);
         return newBoard;
 
@@ -44,11 +48,14 @@ public class BoardService {
     public Board updateBoard(String boardId, BoardDto boardDto) throws IdNotFoundException {
         Board existingBoard = getBoardIfOwner(boardId);
 
+        // Convert and validate collaborators
+        List<Collaborator> updatedCollaborators = checkCollaborators(boardDto.collaborators());
+
         Board updatedBoard = new Board(
                 existingBoard.boardId(),
                 boardDto.title(),
                 existingBoard.ownerId(),
-                boardDto.collaborators()
+                updatedCollaborators
         );
         return boardRepository.save(updatedBoard);
     }
@@ -75,4 +82,21 @@ public class BoardService {
 
         return board;
     }
+
+    private List<Collaborator> checkCollaborators(List<Collaborator> collaboratorsList) {
+        if (collaboratorsList == null) {
+            return new ArrayList<>();
+        }
+
+        return collaboratorsList.stream()
+                .map(collaborator -> new Collaborator(
+                        idService.generateId(),
+                        collaborator.collaboratorName(),
+                        collaborator.collaboratorEmail(),
+                        collaborator.collaboratorAvatar()
+
+                ))
+                .toList();
+    }
 }
+
