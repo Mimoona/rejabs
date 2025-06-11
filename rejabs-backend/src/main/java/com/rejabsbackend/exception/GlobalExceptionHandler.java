@@ -13,7 +13,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionMessage> handleUnknownException(Exception e){
-        e.printStackTrace();
         ExceptionMessage error = new ExceptionMessage( e.getMessage(),
                 Instant.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.name());
@@ -22,7 +21,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IdNotFoundException.class)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(IdNotFoundException e){
-        e.printStackTrace();
         ExceptionMessage error = new ExceptionMessage(e.getMessage(),
                 Instant.now(),
                 HttpStatus.NOT_FOUND.name());
@@ -31,7 +29,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ExceptionMessage> handleAuthenticationException(AuthenticationException e){
-        e.printStackTrace();
         ExceptionMessage error = new ExceptionMessage(e.getMessage(),
                 Instant.now(),
                 HttpStatus.NOT_FOUND.name());
