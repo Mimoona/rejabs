@@ -5,7 +5,6 @@ import {XMarkIcon} from "@heroicons/react/16/solid";
 import type {Board, Collaborator} from "../types/Board.ts";
 
 
-
 interface CreateBoardDialogProps {
     isOpen: boolean;
     onClose: () => void;
@@ -15,7 +14,7 @@ interface CreateBoardDialogProps {
 
 const CreateBoardDialog = ({isOpen, onClose, board, isEditing}: CreateBoardDialogProps) => {
 
-    const {createBoard, updateBoard} = useBoard();
+    const {createBoard, updateBoard, refreshBoards} = useBoard();
     const [title, setTitle] = useState('');
     const [collaboratorName, setCollaboratorName] = useState('');
     const [collaboratorEmail, setCollaboratorEmail] = useState('');
@@ -33,6 +32,7 @@ const CreateBoardDialog = ({isOpen, onClose, board, isEditing}: CreateBoardDialo
                 await createBoard({title, collaborators});
                 resetForm();
             }
+            refreshBoards();
             onClose();
 
         } catch (error) {
@@ -46,14 +46,13 @@ const CreateBoardDialog = ({isOpen, onClose, board, isEditing}: CreateBoardDialo
             return;
         }
 
-        if (collaboratorEmail && /\S+@\S+\.\S+/.test(collaboratorEmail)){
+        if (collaboratorEmail && /\S+@\S+\.\S+/.test(collaboratorEmail)) {
             if (collaborators.some(c => c.collaboratorEmail === collaboratorEmail)) {
                 alert('This collaborator has already been added');
                 return;
             }
 
             const newCollaborator: Collaborator = {
-                collaboratorId: "",
                 collaboratorName: collaboratorName,
                 collaboratorEmail: collaboratorEmail,
                 collaboratorAvatar: collaboratorAvatar
@@ -65,8 +64,8 @@ const CreateBoardDialog = ({isOpen, onClose, board, isEditing}: CreateBoardDialo
             setCollaboratorAvatar('');
         }
     }
-    const removeCollaborator = (email: string) => {
-        setCollaborators(collaborators.filter(c => c !== email));
+    const removeCollaborator = async (email: string) => {
+        setCollaborators(collaborators.filter(c => c.collaboratorEmail !== email));
     };
     const resetForm = () => {
         setTitle('');
@@ -198,7 +197,7 @@ const CreateBoardDialog = ({isOpen, onClose, board, isEditing}: CreateBoardDialo
                                                                 onClick={() => removeCollaborator(each.collaboratorEmail)}
                                                                 className="text-red-500 hover:text-red-700 focus:outline-none"
                                                             >
-                                                            Remove
+                                                                Remove
                                                             </button>
                                                         </li>
                                                     ))}

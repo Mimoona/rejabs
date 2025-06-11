@@ -30,7 +30,7 @@ public class BoardService {
     }
 
     public Board getBoardById(String boardId) throws IdNotFoundException {
-       return  boardRepository.findById(boardId).orElseThrow(()-> new IdNotFoundException(boardId, "Board"));
+        return boardRepository.findById(boardId).orElseThrow(() -> new IdNotFoundException(boardId, "Board"));
     }
 
     public Board createBoard(BoardDto boardDto) {
@@ -49,20 +49,20 @@ public class BoardService {
         Board existingBoard = getBoardIfOwner(boardId);
 
         // Convert and validate collaborators
-        List<Collaborator> updatedCollaborators = checkCollaborators(boardDto.collaborators());
+        List<Collaborator> updatedCollaborators = boardDto.collaborators() != null ? boardDto.collaborators() : existingBoard.collaborators();
 
         Board updatedBoard = new Board(
                 existingBoard.boardId(),
-                boardDto.title(),
+                boardDto.title() != null ? boardDto.title() : existingBoard.title(),
                 existingBoard.ownerId(),
                 updatedCollaborators
         );
         return boardRepository.save(updatedBoard);
     }
 
-    public boolean deleteBoardById(String boardId) throws IdNotFoundException{
+    public boolean deleteBoardById(String boardId) throws IdNotFoundException {
         Board existingBoard = getBoardIfOwner(boardId);
-        if(existingBoard != null){
+        if (existingBoard != null) {
             boardRepository.delete(existingBoard);
             return true;
         }
@@ -70,7 +70,7 @@ public class BoardService {
         return false;
     }
 
-    public Board getBoardIfOwner(String boardId) throws IdNotFoundException, AuthenticationException{
+    public Board getBoardIfOwner(String boardId) throws IdNotFoundException, AuthenticationException {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IdNotFoundException(boardId, "Board"));
 

@@ -9,7 +9,7 @@ const Boards = () => {
     const location = useLocation();
     const board = location.state?.board;
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-    const { updateBoard } = useBoard();
+    const { updateBoard, refreshBoards } = useBoard();
     const [isEditing, setIsEditing] = useState(false);
     if (!board) {
         return <div>Board not found</div>;
@@ -20,6 +20,7 @@ const Boards = () => {
             const newTitle = e.currentTarget.value.trim();
             if (newTitle && newTitle !== board.title) {
                 await updateBoard(board.boardId, { title: newTitle });
+                refreshBoards();
             }
             setIsEditing(false);
         }
@@ -104,6 +105,7 @@ const Boards = () => {
                             board={board}
                             isEditing={isEditing}
                         />
+
 
                     </div>
                 </div>

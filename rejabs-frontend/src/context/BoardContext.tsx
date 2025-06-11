@@ -13,23 +13,21 @@ export const BoardProvider = ({ children }) => {
 
     const fetchBoards = async () => {
         try {
-            const response = await api.get('/boards');
+            const response = await api.get<Board[]>('/boards');
             if (response.status === 200) {
                 setBoards(response.data);
                 setError(null);
             }
-        } catch (error) {
+        } catch (e) {
+            console.error("Failed to fetch Boards", e);
             setBoards([]);
-            const errorMessage = error.response?.data?.message ??
-                error.message ??
-                'An error occurred while fetching boards';
-            console.error('Failed to fetch Boards:', {
-                status: error.response?.status,
-                message: errorMessage,
-                details: error.response?.data
-            });
-            setError(errorMessage);
+            setError(e.message);
         }
+    };
+
+    // Non-async wrapper function
+    const refreshBoards = () => {
+        fetchBoards();  // Call async function without await
     };
 
     useEffect(() => {
@@ -55,8 +53,8 @@ export const BoardProvider = ({ children }) => {
     const updateBoard = async (id: string, data: Partial<Board>): Promise<Board | null> => {
         try {
             const res = await api.put(`/boards/${id}`, data);
-            setBoards(prev =>
-                prev.map(board => (board.boardId === id ? res.data : board))
+            setBoards((prevBoards: Board[])=>
+                prevBoards.map(board => (board.boardId === id ? res.data : board))
             );
             return res.data;
         } catch (e) {
@@ -68,7 +66,7 @@ export const BoardProvider = ({ children }) => {
     const deleteBoard = async (id: string): Promise<boolean> => {
         try {
             await api.delete(`/boards/${id}`);
-            setBoards(prev => prev.filter(board => board.boardId !== id));
+            setBoards((prevBoards: Board[]) => prevBoards.filter(board => board.boardId !== id));
             return true;
         } catch (e) {
             console.error("Delete board failed", e);
@@ -76,9 +74,8 @@ export const BoardProvider = ({ children }) => {
         }
     };
 
-
     return (
-        <BoardContext.Provider value={{ boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards: fetchBoards, error}}>
+        <BoardContext.Provider value={{ boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error}}>
             {children}
         </BoardContext.Provider>
     );

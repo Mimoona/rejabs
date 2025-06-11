@@ -107,13 +107,18 @@ class BoardServiceTest {
     @Test
     void createBoard_shouldReturnBoard_whenCalledWithValidData() {
         // When
-        Mockito.when(idService.generateId()).thenReturn("board123");
+        Mockito.when(idService.generateId())
+                .thenReturn("collab1")
+                .thenReturn("board123");
+
+
         Mockito.when(boardRepository.save(board)).thenReturn(board);
         Mockito.when(authService.getCurrentUserId()).thenReturn(userId );
 
         // Then
         Board actual = boardService.createBoard(createBoardDto);
 
+        Mockito.verify(idService, Mockito.times(2)).generateId();
         Mockito.verify(boardRepository, Mockito.times(1)).save(board);
         assertEquals(board, actual);
 
