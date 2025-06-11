@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
 
 class BoardServiceTest {
@@ -168,7 +169,51 @@ class BoardServiceTest {
         Mockito.verify(authService).getCurrentUserId();
 
         assertEquals("User is not the owner of the board", exception.getMessage());
+    }
 
+    @Test
+    void updateBoard_shouldUseNewCollaborators_whenCollaboratorsProvided_() throws IdNotFoundException, AuthenticationException{
+        // Given
+        String boardId = "b123";
+        Board existing = new Board(boardId, "Old Title", "owner1", List.of());
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(existing));
+        Mockito.when(authService.getCurrentUserId()).thenReturn("owner1");
+
+        List<Collaborator> newCollaborators = List.of(
+                new Collaborator("1", "Alice", "alice@example.com", null)
+        );
+        BoardDto dto = new BoardDto("Updated Title", newCollaborators);
+
+        // When
+        boardService.updateBoard(boardId, dto);
+
+        // Then
+        Mockito.verify(boardRepository).save(argThat(updated ->
+                updated.collaborators().equals(newCollaborators)
+        ));
+
+    }
+
+    @Test
+    void updateBoard_whenCollaboratorsNull_shouldRetainExistingCollaborators() throws IdNotFoundException{
+        // Given
+        String boardId = "b123";
+        List<Collaborator> originalCollaborators = List.of(
+                new Collaborator("2", "Bob", "bob@example.com", null)
+        );
+        Board existing = new Board(boardId, "Old Title", "owner1", originalCollaborators);
+        Mockito.when(boardRepository.findById(boardId)).thenReturn(Optional.of(existing));
+        Mockito.when(authService.getCurrentUserId()).thenReturn("owner1");
+
+        BoardDto dto = new BoardDto("Updated Title", null); // collaborators null
+
+        // When
+        boardService.updateBoard(boardId, dto);
+
+        // Then
+        Mockito.verify(boardRepository).save(argThat(updated ->
+                updated.collaborators().equals(originalCollaborators)
+        ));
     }
 
 
