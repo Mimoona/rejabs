@@ -1,4 +1,4 @@
-import {useAuth} from "../features/auth/AuthContext.tsx";
+import {useAuth} from "../hooks/useAuth.ts";
 
 const Login = () => {
     const {login} = useAuth();

@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import {useAuth} from "../features/auth/AuthContext.tsx";
+import {useAuth} from "../hooks/useAuth.ts";
 
 
 export default function ProtectedRoute() {
