@@ -2,13 +2,13 @@ import type {Board, BoardContextType} from "../types/Board.ts";
 import {createContext, useEffect, useState} from "react";
 import api from "../api/axios.ts";
 
+
 export const BoardContext = createContext<BoardContextType | undefined>(undefined);
 
-export const BoardProvider = ({ children }) => {
+export const BoardProvider = ({ children }: { children: React.ReactNode }) => {
 
-    const [boards, setBoards] = useState<Board[] | undefined>([]);
+    const [boards, setBoards] = useState<Board[]>([]);
     const [error, setError] = useState<string | null>(null);
-
 
 
     const fetchBoards = async () => {
@@ -18,16 +18,16 @@ export const BoardProvider = ({ children }) => {
                 setBoards(response.data);
                 setError(null);
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed to fetch Boards", e);
             setBoards([]);
-            setError(e.message);
+            setError(e.message ?? "Unknown error");
         }
     };
 
     // Non-async wrapper function
-    const refreshBoards = () => {
-        fetchBoards();  // Call async function without await
+    const refreshBoards = async () => {
+        await fetchBoards();  // Call async function without await
     };
 
     useEffect(() => {
@@ -42,10 +42,11 @@ export const BoardProvider = ({ children }) => {
     const createBoard = async (data: Partial<Board>): Promise<Board | null> => {
         try {
             const res = await api.post('/boards', data);
-            setBoards(prev => [...prev, res.data]);
+            setBoards((prev: Board[]) => [...prev, res.data]);
             return res.data;
-        } catch (e) {
+        } catch (e: any) {
             console.error("Create board failed", e);
+            setError(e.message ?? "Unknown error");
             return null;
         }
     };
@@ -53,12 +54,13 @@ export const BoardProvider = ({ children }) => {
     const updateBoard = async (id: string, data: Partial<Board>): Promise<Board | null> => {
         try {
             const res = await api.put(`/boards/${id}`, data);
-            setBoards((prevBoards: Board[])=>
+            setBoards((prevBoards: Board[]) =>
                 prevBoards.map(board => (board.boardId === id ? res.data : board))
             );
             return res.data;
-        } catch (e) {
+        } catch (e: any) {
             console.error("Update board failed", e);
+            setError(e.message ?? "Unknown error");
             return null;
         }
     };
@@ -68,14 +70,15 @@ export const BoardProvider = ({ children }) => {
             await api.delete(`/boards/${id}`);
             setBoards((prevBoards: Board[]) => prevBoards.filter(board => board.boardId !== id));
             return true;
-        } catch (e) {
+        } catch (e: any) {
             console.error("Delete board failed", e);
+            setError(e.message ?? "Unknown error");
             return false;
         }
     };
 
     return (
-        <BoardContext.Provider value={{ boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error}}>
+        <BoardContext.Provider value={{boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error}}>
             {children}
         </BoardContext.Provider>
     );

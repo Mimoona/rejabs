@@ -17,5 +17,5 @@ export type BoardContextType = {
     createBoard: (data: Partial<Board>) => Promise<Board | null>;
     updateBoard: (id: string, data: Partial<Board>) => Promise<Board | null>;
     deleteBoard: (id: string) => Promise<boolean>;
-    refreshBoards: () => void;
+    refreshBoards: () => Promise<void>;
 }
