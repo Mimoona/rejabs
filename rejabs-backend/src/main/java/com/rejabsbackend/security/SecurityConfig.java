@@ -44,7 +44,7 @@ public class SecurityConfig {
                 )
 
                 .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("http://localhost:5173/boards", true))
+                        .defaultSuccessUrl("http://localhost:5173/home", true))
                 .exceptionHandling(error -> error
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         );

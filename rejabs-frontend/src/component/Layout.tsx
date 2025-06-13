@@ -67,7 +67,7 @@ const Layout = () => {
                                                 <Link
                                                     key={board.boardId + index}
                                                     to={`/boards/${board.boardId}`}
-                                                    state={{board: board}}
+                                                    // state={{board: board}}
                                                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                                     onClick={() => setOpenBoardsMenu(false)}
                                                 >

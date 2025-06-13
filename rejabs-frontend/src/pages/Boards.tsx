@@ -1,16 +1,19 @@
-import {useLocation} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useState} from "react";
 import CreateBoardDialog from "../component/CreateBoardDialog.tsx";
 import {useBoard} from "../hooks/useBoard.ts";
 import {UserIcon, UserPlusIcon} from "@heroicons/react/16/solid";
 import type {Collaborator} from "../types/Board.ts";
+import BoardList from "../component/BoardList.tsx";
 
 const Boards = () => {
-    const location = useLocation();
-    const board = location.state?.board;
+    const {boardId} = useParams();
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-    const { updateBoard, refreshBoards } = useBoard();
+    const {boards, updateBoard, refreshBoards} = useBoard();
     const [isEditing, setIsEditing] = useState(false);
+
+
+    const board = boards.find(b => b.boardId === boardId);
     if (!board) {
         return <div>Board not found</div>;
     }
@@ -19,7 +22,7 @@ const Boards = () => {
         if (e.key === 'Enter') {
             const newTitle = e.currentTarget.value.trim();
             if (newTitle && newTitle !== board.title) {
-                await updateBoard(board.boardId, { title: newTitle });
+                await updateBoard(board.boardId, {title: newTitle});
                 refreshBoards();
             }
             setIsEditing(false);
@@ -61,7 +64,7 @@ const Boards = () => {
                         <div className="flex -space-x-2">
 
                             {board.collaborators?.length > 0 ? (
-                                board.collaborators.map((collaborator:Collaborator) => (
+                                board.collaborators.map((collaborator: Collaborator) => (
                                     <img
                                         key={collaborator.collaboratorEmail}
                                         src={collaborator.collaboratorAvatar}
@@ -71,8 +74,9 @@ const Boards = () => {
                                     />
                                 ))
                             ) : (
-                                <div className="w-9 h-9 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center">
-                                    <UserIcon className="h-5 w-5 text-gray-500" />
+                                <div
+                                    className="w-9 h-9 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center">
+                                    <UserIcon className="h-5 w-5 text-gray-500"/>
                                 </div>
                             )}
                         </div>
@@ -115,30 +119,7 @@ const Boards = () => {
 
             <div
                 className="bg-gradient-to-t from-gray-800 via-gray-500 to-gray-300 flex-1 overflow-x-auto px-6 py-4 rounded-lg mt-2">
-                <div className="flex gap-4 w-max">
-                    {/* List 1 */}
-                    <div className="w-64 bg-white rounded-2xl shadow p-4 flex-shrink-0">
-                        <h3 className="text-lg font-semibold text-gray-700 mb-3">List Name 1</h3>
-                        <div className="space-y-3">
-                            <div className="bg-gray-100 rounded-lg p-3 shadow-sm"> Card title</div>
-                            <div className="bg-gray-100 rounded-lg p-3 shadow-sm"> Card title</div>
-                        </div>
-                    </div>
-
-                    {/* List 2 */}
-                    <div className="w-64 bg-white rounded-2xl shadow p-4 flex-shrink-0">
-                        <h3 className="text-lg font-semibold text-gray-700 mb-3">List Name 2</h3>
-                        <div className="space-y-3">
-                            <div className="bg-gray-100 rounded-lg p-3 shadow-sm"> Card Title</div>
-                        </div>
-                    </div>
-
-                    {/* Add list */}
-                    <button
-                        className="w-64 bg-indigo-100 text-indigo-700 rounded-2xl p-4 flex-shrink-0 hover:bg-indigo-200 transition">
-                        + Add another list
-                    </button>
-                </div>
+                <BoardList/>
             </div>
         </div>
 
