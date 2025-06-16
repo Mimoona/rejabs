@@ -2,6 +2,8 @@ import {useBoardList} from "../hooks/useBoardList.ts";
 import {useParams} from "react-router-dom";
 import {useMemo, useRef, useState} from "react";
 import type {BoardList} from "../types/BoardList.ts";
+import {TrashIcon} from "@heroicons/react/24/outline";
+import DeleteDialog from "./DeleteDialog.tsx";
 
 export default function BoardList() {
     const {boardId} = useParams<{ boardId: string }>();
@@ -9,6 +11,7 @@ export default function BoardList() {
         boardLists,
         createBoardList,
         updateBoardList,
+        deleteBoardList,
         error,
         setError
     } = useBoardList();
@@ -16,6 +19,9 @@ export default function BoardList() {
     const [listTitle, setListTitle] = useState("");
     const [editingListId, setEditingListId] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedList, setSelectedList] = useState<BoardList | null>(null);
+
 
     if (!boardId) {
         return <div>Loading board...</div>;
@@ -63,21 +69,37 @@ export default function BoardList() {
 
     // Update
 
-    const handleUpdateListTitle = async (list: BoardList, value: string) => {
-        if (!value.trim()) {
+    const handleUpdateListTitle = async (list: BoardList, title: string) => {
+        if (!title.trim()) {
             setEditingListId(null);
             return;
         }
 
         // First, make the API call
         await updateBoardList(list.boardListId, {
-            listTitle: value.trim(),
+            listTitle: title.trim(),
             boardId,
             position: list.position
         });
 
         setEditingListId(null);
     };
+
+    // Delete List
+
+    const openDeleteDialog = (list: BoardList) => {
+        setSelectedList(list);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (selectedList) {
+            await deleteBoardList(selectedList.boardListId);
+            setIsDeleteDialogOpen(false);
+            setSelectedList(null);
+        }
+    };
+
 
     // For list scroll controls
     const scroll = (direction: "left" | "right") => {
@@ -116,29 +138,40 @@ export default function BoardList() {
                 {currentBoardLists.map(list => (
                     <div
                         key={list.boardListId}
-                        className="w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4"
+                        className="w-80 flex-shrink-0 bg-white rounded-2xl shadow p-4"
                     >
+                        <div className="flex items-center justify-between w-full mb-3">
 
-                        {editingListId === list.boardListId ? (
-                            <input
-                                type="text"
-                                defaultValue={list.listTitle}
-                                autoFocus
-                                className="w-full p-2 text-lg font-semibold text-gray-700 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                                onBlur={(e) => handleUpdateListTitle(list, e)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") handleUpdateListTitle(list, e.currentTarget.value);
-                                    else if (e.key === "Escape") setEditingListId(null);
-                                }}
-                            />
-                        ) : (
-                            <button
-                                className="text-lg font-semibold text-gray-700 mb-3 cursor-pointer hover:bg-gray-100 rounded px-2 py-1"
-                                onClick={() => setEditingListId(list.boardListId)}
-                            >
-                                {list.listTitle}
+                            {editingListId === list.boardListId ? (
+                                <input
+                                    type="text"
+                                    defaultValue={list.listTitle}
+                                    autoFocus
+                                    className="w-full p-2 text-lg font-semibold text-gray-700 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                                    onBlur={(e) => handleUpdateListTitle(list, e)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") handleUpdateListTitle(list, e.currentTarget.value);
+                                        else if (e.key === "Escape") setEditingListId(null);
+                                    }}
+                                />
+                            ) : (
+                                <button
+                                    className="text-lg font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 rounded px-2 truncate w-full text-left"
+                                    title={list.listTitle}
+                                    onClick={() => setEditingListId(list.boardListId)}
+                                >
+                                    {list.listTitle}
+                                </button>
+                            )}
+                            <button onClick={() => openDeleteDialog(list)}>
+                                <TrashIcon className="h-5 w-5 text-gray-500 hover:text-red-600"></TrashIcon>
                             </button>
-                        )}
+                            <DeleteDialog isOpen={isDeleteDialogOpen}
+                                          onClose={() => setIsDeleteDialogOpen(false)}
+                                          item={list}
+                                          onConfirm={handleConfirmDelete}
+                            ></DeleteDialog>
+                        </div>
 
                         <div className="space-y-3">
                             <div className="bg-gray-100 rounded-lg p-3 shadow-sm">Task 1</div>

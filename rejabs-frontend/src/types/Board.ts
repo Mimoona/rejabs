@@ -3,8 +3,8 @@ export type Board = {
     boardId: string,
     title: string,
     collaborators: Collaborator[],
-
 }
+
 export type Collaborator = {
     collaboratorName: string;
     collaboratorEmail: string;

@@ -5,6 +5,7 @@ import {useBoard} from "../hooks/useBoard.ts";
 import {UserIcon, UserPlusIcon} from "@heroicons/react/16/solid";
 import type {Collaborator} from "../types/Board.ts";
 import BoardList from "../component/BoardList.tsx";
+import {ExclamationCircleIcon} from "@heroicons/react/24/outline";
 
 const Boards = () => {
     const {boardId} = useParams();
@@ -19,6 +20,8 @@ const Boards = () => {
     }
 
     const handleTitleUpdate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+        setError(null);
+
         if (e.key === 'Enter') {
             const newTitle = e.currentTarget.value.trim();
 
@@ -30,8 +33,9 @@ const Boards = () => {
                 await updateBoard(board.boardId, {title: newTitle});
                 await refreshBoards();
             }
+
             setIsEditing(false);
-            setError("");
+
         }
     };
 
@@ -45,20 +49,19 @@ const Boards = () => {
                     {/* Board Name */}
                     <div className="relative flex-grow gap-1 ">
                         {isEditing ? (
-                            <div>
+                            <div className="flex items-center gap-2 relative">
                                 <input
                                     type="text"
                                     defaultValue={board.title}
                                     onKeyDown={handleTitleUpdate}
                                     className={`text-xl font-mono bg-transparent text-white border-b ${error ? "border-red-500" : "border-white/50"} outline-none px-1 w-72`}
                                     autoFocus
-                                    minLength={30}
-                                    required
                                 />
 
                                 {error && (
-                                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500"
+                                    <span className="text-red-500 text-sm"
                                           title={error}>
+                                        <ExclamationCircleIcon className="h-6 w-6 text-red "></ExclamationCircleIcon>
                                     </span>
                                 )}
 
