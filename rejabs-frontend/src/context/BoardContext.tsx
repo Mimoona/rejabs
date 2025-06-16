@@ -78,7 +78,7 @@ export const BoardProvider = ({children}: { children: React.ReactNode }) => {
     };
 
     return (
-        <BoardContext.Provider value={{boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error}}>
+        <BoardContext.Provider value={{boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error, setError}}>
             {children}
         </BoardContext.Provider>
     );

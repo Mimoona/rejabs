@@ -1,5 +1,3 @@
-import type {Board} from "./Board.ts";
-
 export type BoardList = {
     boardListId: string,
     listTitle: string,
@@ -10,9 +8,9 @@ export type BoardList = {
 
 export type BoardListContextType = {
     boardLists: BoardList[];
-    getBoardList: (id: string) => Promise<Board>;
-    createBoardList: (data: Partial<Board>) => Promise<Board | null>;
-    updateBoardList: (id: string, data: Partial<Board>) => Promise<Board | null>;
+    getBoardList: (id: string) => Promise<BoardList>;
+    createBoardList: (data: Partial<BoardList>) => Promise<BoardList>;
+    updateBoardList: (id: string, data: Partial<BoardList>) => Promise<BoardList | null>;
     deleteBoardList: (id: string) => Promise<boolean>;
     fetchLists: () => Promise<void>;
     refreshBoardLists: () => Promise<void>;

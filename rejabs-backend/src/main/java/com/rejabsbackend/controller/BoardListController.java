@@ -29,18 +29,18 @@ public class BoardListController {
     }
 
     @PostMapping("/create")
-    public BoardList createBoard(@RequestBody BoardListDto boardListDto) {
-        return boardListService.createBoard(boardListDto);
+    public BoardList createBoardList(@RequestBody BoardListDto boardListDto) {
+        return boardListService.createBoardList(boardListDto);
     }
 
     @PutMapping("/{boardListId}")
-    public BoardList updateBoard(@PathVariable String boardListId, @RequestBody BoardListDto boardListDTo) throws IdNotFoundException {
-        return boardListService.updateBoard(boardListId, boardListDTo);
+    public BoardList updateBoardList(@PathVariable String boardListId, @RequestBody BoardListDto boardListDTo) throws IdNotFoundException {
+        return boardListService.updateBoardList(boardListId, boardListDTo);
     }
 
 
     @DeleteMapping("/{boardListId}")
-    public boolean deleteBoard(@PathVariable String boardListId) {
-        return boardListService.deleteBoardById(boardListId);
+    public boolean deleteBoardList(@PathVariable String boardListId) {
+        return boardListService.deleteBoardListById(boardListId);
     }
 }

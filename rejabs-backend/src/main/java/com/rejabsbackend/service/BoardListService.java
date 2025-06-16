@@ -2,6 +2,7 @@ package com.rejabsbackend.service;
 
 import com.rejabsbackend.dto.BoardListDto;
 import com.rejabsbackend.exception.IdNotFoundException;
+import com.rejabsbackend.model.Board;
 import com.rejabsbackend.model.BoardList;
 import com.rejabsbackend.repo.BoardListRepository;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class BoardListService {
                 .orElseThrow(() -> new IdNotFoundException(boardListId, "Board List"));
     }
 
-    public BoardList createBoard(BoardListDto boardListDto) {
+    public BoardList createBoardList(BoardListDto boardListDto) {
         BoardList boardList = new BoardList(
                 idService.generateId(),
                 boardListDto.listTitle(),
@@ -38,20 +39,21 @@ public class BoardListService {
         return boardListRepository.save(boardList);
     }
 
-    public BoardList updateBoard(String boardListId, BoardListDto boardListDto) throws IdNotFoundException {
+    public BoardList updateBoardList(String boardListId, BoardListDto boardListDto) throws IdNotFoundException {
 
         BoardList boardListExist = boardListRepository.findById(boardListId)
                 .orElseThrow(() -> new IdNotFoundException(boardListId, "Board List"));
 
-        return new BoardList(
+        BoardList updatedBoardList =  new BoardList(
                 boardListExist.boardListId(),
-                boardListDto.listTitle() != null ? boardListDto.listTitle() : boardListExist.listTitle(),
+                boardListDto.listTitle(),
                 boardListExist.boardId(),
                 boardListDto.position()
         );
+        return boardListRepository.save(updatedBoardList);
     }
 
-    public boolean deleteBoardById(String boardListId) {
+    public boolean deleteBoardListById(String boardListId) {
         if(boardListRepository.existsById(boardListId)) {
             boardListRepository.deleteById(boardListId);
             return true;

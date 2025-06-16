@@ -1,15 +1,20 @@
 import {useBoardList} from "../hooks/useBoardList.ts";
 import {useParams} from "react-router-dom";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import type {BoardList} from "../types/BoardList.ts";
 
 export default function BoardList() {
     const {boardId} = useParams<{ boardId: string }>();
-    const {boardLists, createBoardList} = useBoardList();
+    const {
+        boardLists,
+        createBoardList,
+        updateBoardList,
+        error,
+        setError
+    } = useBoardList();
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [listTitle, setListTitle] = useState("");
-    const [isEditing, setIsEditing] = useState(false);
-    const [error, setError] = useState('');
+    const [editingListId, setEditingListId] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     if (!boardId) {
@@ -32,21 +37,21 @@ export default function BoardList() {
                 return;
             }
 
-            try {
-                const newList: Partial<BoardList> = {
-                    listTitle: newListTitle,
-                    boardId: boardId,
-                    position: currentBoardLists?.length || 0
-                };
+            const newList: Partial<BoardList> = {
+                listTitle: newListTitle,
+                boardId,
+                position: currentBoardLists?.length
+            };
 
-                const createdList:Partial<BoardList> = await createBoardList(newList);
-                if (createdList && createdList.boardId === boardId) {
-                    setListTitle('');
-                    setIsAdding(false);
-                    setError('');
-                }
-            } catch (err) {
-                setError( err);
+            const createdList: Partial<BoardList> = await createBoardList(newList);
+            if (createdList && createdList.boardId === boardId) {
+                //await refreshBoardLists();
+                setListTitle('');
+                setIsAdding(false);
+                setError("");
+                setTimeout(() => {
+                    scrollRef.current?.scrollTo({left: scrollRef.current.scrollWidth, behavior: "smooth"});
+                }, 100); // slight delay to allow rendering
             }
         }
         if (e.key === 'Escape') {
@@ -56,7 +61,25 @@ export default function BoardList() {
         }
     }
 
-    // For list scroll
+    // Update
+
+    const handleUpdateListTitle = async (list: BoardList, value: string) => {
+        if (!value.trim()) {
+            setEditingListId(null);
+            return;
+        }
+
+        // First, make the API call
+        await updateBoardList(list.boardListId, {
+            listTitle: value.trim(),
+            boardId,
+            position: list.position
+        });
+
+        setEditingListId(null);
+    };
+
+    // For list scroll controls
     const scroll = (direction: "left" | "right") => {
         if (!scrollRef.current) return;
         const scrollAmount = 300; // px
@@ -65,15 +88,6 @@ export default function BoardList() {
             behavior: "smooth",
         });
     };
-
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTo({
-                left: scrollRef.current.scrollWidth,
-                behavior: "smooth",
-            });
-        }
-    }, [boardLists.length]);
 
 
     return (
@@ -93,10 +107,10 @@ export default function BoardList() {
                 →
             </button>
 
-            {/* Scrollable List Row */}
+            {/* Scrollable list container */}
             <div
                 ref={scrollRef}
-                className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth"
+                className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth hide-scrollbar"
                 style={{scrollBehavior: "smooth"}}
             >
                 {currentBoardLists.map(list => (
@@ -104,9 +118,28 @@ export default function BoardList() {
                         key={list.boardListId}
                         className="w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4"
                     >
-                        <h3 className="text-lg font-semibold text-gray-700 mb-3">
-                            {list.listTitle}
-                        </h3>
+
+                        {editingListId === list.boardListId ? (
+                            <input
+                                type="text"
+                                defaultValue={list.listTitle}
+                                autoFocus
+                                className="w-full p-2 text-lg font-semibold text-gray-700 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                                onBlur={(e) => handleUpdateListTitle(list, e)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") handleUpdateListTitle(list, e.currentTarget.value);
+                                    else if (e.key === "Escape") setEditingListId(null);
+                                }}
+                            />
+                        ) : (
+                            <button
+                                className="text-lg font-semibold text-gray-700 mb-3 cursor-pointer hover:bg-gray-100 rounded px-2 py-1"
+                                onClick={() => setEditingListId(list.boardListId)}
+                            >
+                                {list.listTitle}
+                            </button>
+                        )}
+
                         <div className="space-y-3">
                             <div className="bg-gray-100 rounded-lg p-3 shadow-sm">Task 1</div>
                         </div>
@@ -116,66 +149,38 @@ export default function BoardList() {
                     </div>
                 ))}
 
-                {/* Add New List */}
+                {/* Add New List UI*/}
+
                 {isAdding ? (
                     <div className="w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4">
-                        {/* Add list form input */}
-                        {/* ... (same as your input logic) */}
-                        <div className="relative">
-                            {isEditing ? (
-                                <div>
-                                    <input
-                                        className={`w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-gray-700
-                                ${error ? 'border-red-500' : 'border-gray-300'}`}
-                                        type="text"
-                                        placeholder="Enter list title..."
-                                        autoFocus
-                                        value={listTitle}
-                                        onKeyDown={handleCreateBoardList}
-                                        onBlur={() => {
-                                            if (!listTitle.trim()) {
-                                                setIsAdding(false);
-                                                setError('');
-                                            }
-                                        }}
-                                        onChange={(e) => {
-                                            setListTitle(e.target.value);
-                                            if (error) setError('');
-                                        }}
-                                    />
-                                    {error && (
-                                        <div className="absolute -bottom-6 left-0 text-red-500 text-sm">
-                                            {error}
-                                        </div>
-                                    )}
-                                    <div className="text-sm text-gray-500 mt-2">
-                                        Press Enter to add • Esc to cancel
-                                    </div>
-
-                                </div>
-                            ) : (
-                                <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="w-full text-left p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors"
-                                >
-                                    {listTitle}
-                                </button>
-                            )}
-                        </div>
-
-                        <button
-                            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                        >
-                            Add card
-                        </button>
-
-
+                        <input
+                            autoFocus
+                            value={listTitle}
+                            placeholder="Enter list title..."
+                            className={`w-full p-2 border rounded focus:outline-none ${
+                                error ? "border-red-500" : "border-gray-300"
+                            }`}
+                            onChange={(e) => {
+                                setListTitle(e.target.value);
+                                if (error) setError("");
+                            }}
+                            onKeyDown={handleCreateBoardList}
+                            onBlur={() => {
+                                if (!listTitle.trim()) {
+                                    setIsAdding(false);
+                                    setError("");
+                                }
+                            }}
+                        />
+                        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                        <p className="text-sm text-gray-500 mt-2">Press Enter to add • Esc to cancel</p>
                     </div>
                 ) : (
                     <button
                         onClick={() => {
                             setIsAdding(true);
-                            setIsEditing(true);
+                            setListTitle("");
+                            setEditingListId(null);
                         }}
                         className="w-64 flex-shrink-0 bg-indigo-100 text-indigo-700 rounded-2xl p-4 hover:bg-indigo-200 transition"
                     >
@@ -184,92 +189,5 @@ export default function BoardList() {
                 )}
             </div>
         </div>
-
-    // <div className="flex gap-4 w-max">
-    //     {/* Existing Lists */}
-    //     {currentBoardLists?.map((list) => (
-    //         <div
-    //             key={list.boardListId}
-    //             className="w-64 bg-white rounded-2xl shadow p-4 flex-shrink-0"
-    //         >
-    //             <h3 className="text-lg font-semibold text-gray-700 mb-3">
-    //                 {list.listTitle}
-    //             </h3>
-    //             {/* Placeholder for cards */}
-    //             <div className="space-y-3">
-    //                 <div className="bg-gray-100 rounded-lg p-3 shadow-sm">Task 1</div>
-    //             </div>
-    //             <button
-    //                 className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-    //             >
-    //                 Add Card
-    //             </button>
-    //         </div>
-    //     ))}
-    //
-    //     {/* Add List Form */}
-    //     {isAdding ? (
-    //         <div className="w-64 bg-white rounded-2xl shadow p-4 flex-shrink-0">
-    //             <div className="relative">
-    //                 {isEditing ? (
-    //                     <div>
-    //                         <input
-    //                             className={`w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-gray-700
-    //                             ${error ? 'border-red-500' : 'border-gray-300'}`}
-    //                             type="text"
-    //                             placeholder="Enter list title..."
-    //                             autoFocus
-    //                             value={listTitle}
-    //                             onKeyDown={handleCreateBoardList}
-    //                             onBlur={() => {
-    //                                 if (!listTitle.trim()) {
-    //                                     setIsAdding(false);
-    //                                         setError('');
-    //                                     }
-    //                                 }}
-    //                                 onChange={(e) => {
-    //                                     setListTitle(e.target.value);
-    //                                     if (error) setError('');
-    //                                 }}
-    //                             />
-    //                             {error && (
-    //                                 <div className="absolute -bottom-6 left-0 text-red-500 text-sm">
-    //                                     {error}
-    //                                 </div>
-    //                             )}
-    //                             <div className="text-sm text-gray-500 mt-2">
-    //                                 Press Enter to add • Esc to cancel
-    //                             </div>
-    //
-    //                         </div>
-    //                     ) : (
-    //                         <button
-    //                             onClick={() => setIsEditing(true)}
-    //                             className="w-full text-left p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors"
-    //                         >
-    //                             {listTitle}
-    //                         </button>
-    //                     )}
-    //                 </div>
-    //
-    //                 <button
-    //                     className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-    //                 >
-    //                     Add card
-    //                 </button>
-    //
-    //             </div>
-    //         ) : (
-    //             <button
-    //                 onClick={() => {
-    //                     setIsAdding(true);
-    //                     setIsEditing(true);
-    //                 }}
-    //                 className="w-64 bg-indigo-100 text-indigo-700 rounded-2xl p-4 flex-shrink-0 hover:bg-indigo-200 transition"
-    //             >
-    //                 + Add another list
-    //             </button>
-    //         )}
-    //     </div>
     )
 };

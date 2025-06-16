@@ -9,7 +9,7 @@ import BoardList from "../component/BoardList.tsx";
 const Boards = () => {
     const {boardId} = useParams();
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-    const {boards, updateBoard, refreshBoards} = useBoard();
+    const {boards, updateBoard, refreshBoards, error, setError} = useBoard();
     const [isEditing, setIsEditing] = useState(false);
 
 
@@ -21,11 +21,17 @@ const Boards = () => {
     const handleTitleUpdate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             const newTitle = e.currentTarget.value.trim();
+
+            if (!newTitle) {
+                setError("Please enter a Board name");
+                return;
+            }
             if (newTitle && newTitle !== board.title) {
                 await updateBoard(board.boardId, {title: newTitle});
-                refreshBoards();
+                await refreshBoards();
             }
             setIsEditing(false);
+            setError("");
         }
     };
 
@@ -39,24 +45,35 @@ const Boards = () => {
                     {/* Board Name */}
                     <div className="relative flex-grow gap-1 ">
                         {isEditing ? (
-                            <input
-                                type="text"
-                                defaultValue={board.title}
-                                onKeyDown={handleTitleUpdate}
-                                className="text-xl font-mono bg-transparent text-white border-b border-white/50 outline-none px-1 w-72"
-                                autoFocus
-                                minLength={30}
-                                required
-                            />
+                            <div>
+                                <input
+                                    type="text"
+                                    defaultValue={board.title}
+                                    onKeyDown={handleTitleUpdate}
+                                    className={`text-xl font-mono bg-transparent text-white border-b ${error ? "border-red-500" : "border-white/50"} outline-none px-1 w-72`}
+                                    autoFocus
+                                    minLength={30}
+                                    required
+                                />
+
+                                {error && (
+                                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500"
+                                          title={error}>
+                                    </span>
+                                )}
+
+                            </div>
                         ) : (
                             <button
                                 className="text-xl font-mono text-white cursor-pointer hover:bg-white/10 px-1 rounded"
                                 onClick={() => setIsEditing(true)}
                             >
                                 {board.title}
+
                             </button>
                         )}
                     </div>
+
                     <div className="flex items-center space-x-4">
 
                         {/* Collaborators */}

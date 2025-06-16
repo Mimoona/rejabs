@@ -13,7 +13,6 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
             const response = await api.get<BoardList[]>(`/board-list`);
             if (response.status === 200) {
                 setBoardLists(response.data);
-                console.log(response.data);
                 setError(null);
             }
         } catch (e: any) {
@@ -48,12 +47,15 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
         }
     };
 
-    const updateBoardList = async (listId: string, data: Partial<BoardList>): Promise<BoardList | null> => {
+    const updateBoardList = async (boardListId: string, data: Partial<BoardList>): Promise<BoardList | null> => {
+        console.log(boardListId, data);
         try {
-            const res = await api.put(`/board-list/${listId}`, data);
-            setBoardLists((prevBoardLists: BoardList[]) =>
-                prevBoardLists.map(boardList => (boardList.boardListId === listId ? res.data : boardList))
-            );
+            const res = await api.put(`/board-list/${boardListId}`, data);
+            if(res){
+                setBoardLists((prevBoardLists: BoardList[]) =>
+                    prevBoardLists.map(boardList => (boardList.boardListId === boardListId ? res.data : boardList))
+                );
+            }
             return res.data;
         } catch (e: any) {
             console.error("Failed to update board list", e);
@@ -84,7 +86,8 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
             deleteBoardList,
             fetchLists,
             refreshBoardLists,
-            error
+            error,
+            setError
         }}>
             {children}
         </BoardListContext.Provider>
