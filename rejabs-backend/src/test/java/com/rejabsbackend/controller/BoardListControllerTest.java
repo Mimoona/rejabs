@@ -1,16 +1,9 @@
 package com.rejabsbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rejabsbackend.dto.BoardDto;
 import com.rejabsbackend.dto.BoardListDto;
-import com.rejabsbackend.model.AppUser;
-import com.rejabsbackend.model.Board;
 import com.rejabsbackend.model.BoardList;
-import com.rejabsbackend.model.Collaborator;
-import com.rejabsbackend.repo.AppUserRepository;
 import com.rejabsbackend.repo.BoardListRepository;
-import com.rejabsbackend.repo.BoardRepository;
-import com.rejabsbackend.service.BoardListService;
 import com.rejabsbackend.service.IdService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

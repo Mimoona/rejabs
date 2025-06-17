@@ -1,13 +1,9 @@
 package com.rejabsbackend.service;
 
-import com.rejabsbackend.dto.BoardDto;
 import com.rejabsbackend.dto.BoardListDto;
 import com.rejabsbackend.exception.IdNotFoundException;
-import com.rejabsbackend.model.Board;
 import com.rejabsbackend.model.BoardList;
-import com.rejabsbackend.model.Collaborator;
 import com.rejabsbackend.repo.BoardListRepository;
-import com.rejabsbackend.repo.BoardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -22,17 +22,17 @@ export default function BoardList() {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedList, setSelectedList] = useState<BoardList | null>(null);
 
-
-    if (!boardId) {
-        return <div>Loading board...</div>;
-    }
-
     // Filter and sort lists for current board
     const currentBoardLists = useMemo(() => {
         return boardLists
             ?.filter(list => list.boardId === boardId)
             ?.sort((a, b) => (a.position ?? 0) - (b.position ?? 0)) || [];
     }, [boardLists, boardId]);
+
+
+    if (!boardId) {
+        return <div>Loading board...</div>;
+    }
 
     const handleCreateBoardList = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
