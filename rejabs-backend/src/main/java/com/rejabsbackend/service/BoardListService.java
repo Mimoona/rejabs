@@ -19,7 +19,7 @@ public class BoardListService {
         this.idService = idService;
     }
 
-    public List<BoardList> getAllListsByBoardId() {
+    public List<BoardList> getAllBoardLists() {
         return boardListRepository.findAll();
     }
 
@@ -53,11 +53,11 @@ public class BoardListService {
         return boardListRepository.save(updatedBoardList);
     }
 
-    public boolean deleteBoardListById(String boardListId) {
+    public boolean deleteBoardListById(String boardListId) throws IdNotFoundException {
         if(boardListRepository.existsById(boardListId)) {
             boardListRepository.deleteById(boardListId);
             return true;
         }
-        return false;
+        throw new IdNotFoundException(boardListId, "Board List");
     }
 }

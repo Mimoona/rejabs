@@ -35,6 +35,7 @@ class BoardServiceTest {
     @BeforeEach
     void setUp() {
 
+
         board = new Board(boardId, "Original Title", userId , List.of(
                 new Collaborator("collab1", "John Doe", "john@example.com", "avatar1.jpg")
         ));

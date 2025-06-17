@@ -4,6 +4,7 @@ import com.rejabsbackend.dto.BoardListDto;
 import com.rejabsbackend.exception.IdNotFoundException;
 import com.rejabsbackend.model.BoardList;
 import com.rejabsbackend.service.BoardListService;
+import org.springframework.data.annotation.Id;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class BoardListController {
     }
 
     @GetMapping
-    public List<BoardList> getListsByBoardId() {
-        return boardListService.getAllListsByBoardId();
+    public List<BoardList> getAllBoardLists() {
+        return boardListService.getAllBoardLists();
     }
 
     @GetMapping("/{boardListId}")
@@ -40,7 +41,7 @@ public class BoardListController {
 
 
     @DeleteMapping("/{boardListId}")
-    public boolean deleteBoardList(@PathVariable String boardListId) {
+    public boolean deleteBoardList(@PathVariable String boardListId) throws IdNotFoundException {
         return boardListService.deleteBoardListById(boardListId);
     }
 }
