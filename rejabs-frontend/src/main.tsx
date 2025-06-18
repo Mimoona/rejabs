@@ -5,6 +5,7 @@ import App from './App.tsx'
 import {BrowserRouter} from "react-router-dom";
 import {AuthProvider} from "./context/AuthContext.tsx"
 import {BoardProvider} from "./context/BoardContext.tsx";
+import {BoardListProvider} from "./context/BoardListContext.tsx";
 
 
 createRoot(document.getElementById('root')!).render(
@@ -12,7 +13,9 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
             <AuthProvider>
                 <BoardProvider>
-                    <App/>
+                    <BoardListProvider>
+                        <App/>
+                    </BoardListProvider>
                 </BoardProvider>
             </AuthProvider>
         </BrowserRouter>
