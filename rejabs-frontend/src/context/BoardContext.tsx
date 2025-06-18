@@ -5,7 +5,7 @@ import api from "../api/axios.ts";
 
 export const BoardContext = createContext<BoardContextType | undefined>(undefined);
 
-export const BoardProvider = ({ children }: { children: React.ReactNode }) => {
+export const BoardProvider = ({children}: { children: React.ReactNode }) => {
 
     const [boards, setBoards] = useState<Board[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export const BoardProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Non-async wrapper function
     const refreshBoards = async () => {
-        await fetchBoards();  // Call async function without await
+        await fetchBoards();
     };
 
     useEffect(() => {
@@ -78,7 +78,7 @@ export const BoardProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <BoardContext.Provider value={{boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error}}>
+        <BoardContext.Provider value={{boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error, setError}}>
             {children}
         </BoardContext.Provider>
     );

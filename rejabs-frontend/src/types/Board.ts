@@ -4,6 +4,7 @@ export type Board = {
     title: string,
     collaborators: Collaborator[],
 }
+
 export type Collaborator = {
     collaboratorName: string;
     collaboratorEmail: string;

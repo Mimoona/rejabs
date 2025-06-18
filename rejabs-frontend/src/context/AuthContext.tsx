@@ -41,7 +41,7 @@ export const AuthProvider = ({ children}: { children: React.ReactNode }) => {
 
         if (hasSession && window.location.pathname === "/signup") {
             // User is likely authenticated
-            window.location.href = "/boards";
+            window.location.href = "/home";
         } else {
             // Redirect to GitHub OAuth
             window.open(`${host}/oauth2/authorization/github`, "_self");
