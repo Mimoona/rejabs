@@ -105,8 +105,6 @@ const Boards = () => {
                             board={board}
                             isEditing={isEditing}
                         />
-
-
                     </div>
                 </div>
             </div>
