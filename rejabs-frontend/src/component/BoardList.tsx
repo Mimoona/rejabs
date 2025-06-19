@@ -6,7 +6,6 @@ import {TrashIcon} from "@heroicons/react/24/outline";
 import DeleteDialog from "./DeleteDialog.tsx";
 import CardList from "./CardList.tsx";
 
-
 export default function BoardList() {
     const {boardId} = useParams<{ boardId: string }>();
     const {
@@ -116,7 +115,7 @@ export default function BoardList() {
 
     return (
 
-        <div className="flex-1 h-full overflow-y-auto">
+        <div className="flex-1 overflow-hidden relative">
             {/* Scroll Buttons */}
             <button
                 className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-200 rounded-full p-2 shadow hover:bg-gray-300"
@@ -137,6 +136,9 @@ export default function BoardList() {
                 className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth hide-scrollbar items-start"
                 style={{scrollBehavior: "smooth"}}
             >
+
+
+
                 {currentBoardLists.map(list => (
                     <div
                         key={list.boardListId}
@@ -175,8 +177,6 @@ export default function BoardList() {
                             ></DeleteDialog>
                         </div>
                         <CardList listId={list.boardListId}/>
-
-
                     </div>
                 ))}
 

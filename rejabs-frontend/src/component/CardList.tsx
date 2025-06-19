@@ -1,30 +1,49 @@
 import CardDialog from "./CardDialog.tsx";
-import {useState} from "react";
+import {JSX, useState} from "react";
 import {useCard} from "../hooks/useCard.ts";
 import {PlusIcon} from "@heroicons/react/20/solid";
 import CardItem from "./CardItem.tsx";
 import CardPreview from "./CardPreview.tsx";
 import type {Card} from "../types/Card.ts";
 
+
 const CardList = ({listId}: { listId: string }) => {
     const [isCardDialogOpen, setIsCardDialogOpen] = useState(false);
     const [selectedCard, setSelectedCard] = useState<Card>();
-    const {cards} = useCard();
+    const {cards, updateCard} = useCard();
 
     // Filter cards by this list
     const filteredCards = (cards || []).filter(card => card.listId === listId);
+    console.log(listId);
     if (!listId || !cards) {
         return <div>Loading board...</div>;
     }
-    // #d7d7d7
+    const handleDragEnd = async (result: any) => {
+        console.log(listId);
+        console.log("Drag result", result);
+
+        const {source, destination, draggableId} = result;
+        if (!destination) return;
+        if (source.index === destination.index) return;
+
+        const movedCardId = draggableId;
+        const newPosition = destination.index;
+
+        const updatedPosition: Partial<Card> = {
+            listId,
+            position: newPosition
+        };
+
+        await updateCard(movedCardId, updatedPosition);
+    };
 
 
     return (
 
-        <div className="space-y-3">
+        <div className="flex-grow space-y-3">
             {/* All existing Cards */}
             {filteredCards && filteredCards.map(card => (
-                <div  key={card.cardId}>
+                <div key={card.cardId}>
                     <CardPreview
                         key={card.cardId}
                         card={card}
