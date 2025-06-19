@@ -152,7 +152,7 @@ export default function BoardList() {
                                     defaultValue={list.listTitle}
                                     autoFocus
                                     className="w-full p-2 text-lg font-semibold text-gray-700 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                                    onBlur={(e) => handleUpdateListTitle(list, e)}
+                                    onBlur={(e) => handleUpdateListTitle(list, e.target.value)}
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter") handleUpdateListTitle(list, e.currentTarget.value);
                                         else if (e.key === "Escape") setEditingListId(null);

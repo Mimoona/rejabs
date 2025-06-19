@@ -58,7 +58,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
                 );
             }
             return res.data;
-        } catch (e: any) {
+        } catch (e: unknown) {
             console.error("Failed to update card", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -70,7 +70,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
             await api.delete(`/cards/${cardId}`);
             setCards((prevCards: Card[]) => prevCards.filter(card => card.cardId !== cardId));
             return true;
-        } catch (e: any) {
+        } catch (e: unknown) {
             console.error("Failed to delete card", e);
             setError(e.message ?? "Unknown error");
             return false;

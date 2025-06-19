@@ -58,7 +58,7 @@ export const BoardProvider = ({children}: { children: React.ReactNode }) => {
                 prevBoards.map(board => (board.boardId === id ? res.data : board))
             );
             return res.data;
-        } catch (e: any) {
+        } catch (e: unknown) {
             console.error("Update board failed", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -70,7 +70,7 @@ export const BoardProvider = ({children}: { children: React.ReactNode }) => {
             await api.delete(`/boards/${id}`);
             setBoards((prevBoards: Board[]) => prevBoards.filter(board => board.boardId !== id));
             return true;
-        } catch (e: any) {
+        } catch (e: unknown) {
             console.error("Delete board failed", e);
             setError(e.message ?? "Unknown error");
             return false;
@@ -78,7 +78,8 @@ export const BoardProvider = ({children}: { children: React.ReactNode }) => {
     };
 
     return (
-        <BoardContext.Provider value={{boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error, setError}}>
+        <BoardContext.Provider
+            value={{boards, getBoard, createBoard, updateBoard, deleteBoard, refreshBoards, error, setError}}>
             {children}
         </BoardContext.Provider>
     );
