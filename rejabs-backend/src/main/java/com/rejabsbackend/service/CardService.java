@@ -3,7 +3,6 @@ package com.rejabsbackend.service;
 import com.rejabsbackend.dto.CardDto;
 import com.rejabsbackend.exception.IdNotFoundException;
 import com.rejabsbackend.model.Card;
-import com.rejabsbackend.repo.BoardRepository;
 import com.rejabsbackend.repo.CardRepository;
 import org.springframework.stereotype.Service;
 

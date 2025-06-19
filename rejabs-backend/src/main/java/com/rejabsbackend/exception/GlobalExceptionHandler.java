@@ -21,7 +21,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IdNotFoundException.class)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(IdNotFoundException e){
-        e.printStackTrace();
         ExceptionMessage error = new ExceptionMessage(e.getMessage(),
                 Instant.now(),
                 HttpStatus.NOT_FOUND.name());
