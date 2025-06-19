@@ -1,20 +1,19 @@
 export const LABEL_OPTIONS = [
-    {name:"URGENT" , color: "#FF4D4D"} ,
-    { name: "DESIGN", color: "plum" },
-    { name: "BACKEND", color: "darkolivegreen" },
-    { name: "FRONTEND", color: "salmon" },
-    { name: "BLOCKED", color: "tomato" },
-    { name: "REVIEW", color: "chocolate" },
-    { name: "QA", color: "olivedrab" },
-    { name: "TODO", color: "#4DB8FF" },
-    { name: "IN_PROGRESS", color: "darkorange" },
-    { name: "DONE", color: "limegreen" },
-    { name: "HIGH_PRIORITY", color: "orangered" },
+    { name: "HIGH_PRIORITY", color: "red" },
     { name: "MEDIUM_PRIORITY", color: "coral" },
-    { name: "LOW_PRIORITY", color: "#23b07f" },
-    { name: "BUG", color: "red" },
+    { name: "LOW_PRIORITY", color: "yellow" },
+    { name: "DESIGN", color: "purple" },
+    { name: "BACKEND", color: "green" },
+    { name: "FRONTEND", color: "orange" },
+    { name: "QA", color: "olivedrab" },
+    { name: "BUG", color: "darkorange" },
     { name: "FEATURE", color: "#d243d2" },
-    { name: "PLAN", color: "#328cd9" }
+    { name: "PLAN", color: "#328cd9" },
+    { name: "TODO", color: "#23b07f" },
+    { name: "IN_PROGRESS", color: "chocolate" },
+    { name: "DONE", color: "limegreen" },
+    { name: "BLOCKER", color: "tomato" },
+    { name: "REVIEW", color: "green" },
 ] as const;
 
 export type Label = typeof LABEL_OPTIONS[number];

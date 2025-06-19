@@ -1,6 +1,6 @@
 import {useBoardList} from "../hooks/useBoardList.ts";
 import {useParams} from "react-router-dom";
-import {JSX, ReactNode, useMemo, useRef, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import type {BoardList} from "../types/BoardList.ts";
 import {TrashIcon} from "@heroicons/react/24/outline";
 import DeleteDialog from "./DeleteDialog.tsx";
@@ -134,13 +134,13 @@ export default function BoardList() {
             {/* Scrollable list container */}
             <div
                 ref={scrollRef}
-                className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth hide-scrollbar"
+                className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth hide-scrollbar items-start"
                 style={{scrollBehavior: "smooth"}}
             >
                 {currentBoardLists.map(list => (
                     <div
                         key={list.boardListId}
-                        className="w-80 flex-shrink-0 bg-white rounded-2xl shadow p-4"
+                        className="w-80 bg-white rounded-2xl shadow p-4 flex flex-col"
                     >
                         <div className="flex items-center justify-between w-full mb-3">
 
@@ -213,7 +213,7 @@ export default function BoardList() {
                             setListTitle("");
                             setEditingListId(null);
                         }}
-                        className="w-64 flex-shrink-0 bg-indigo-100 text-indigo-700 rounded-2xl p-4 hover:bg-indigo-200 transition"
+                        className="w-64 bg-indigo-100 text-blue-700 rounded-2xl p-4 hover:bg-indigo-200 transition"
                     >
                         + Add another list
                     </button>

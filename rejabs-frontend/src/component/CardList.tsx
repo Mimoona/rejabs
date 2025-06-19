@@ -24,7 +24,7 @@ const CardList = ({listId}: { listId: string }) => {
         <div className="space-y-3">
             {/* All existing Cards */}
             {filteredCards && filteredCards.map(card => (
-                <div>
+                <div  key={card.cardId}>
                     <CardPreview
                         key={card.cardId}
                         card={card}

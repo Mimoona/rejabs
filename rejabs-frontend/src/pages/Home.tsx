@@ -6,7 +6,6 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 
 const LABEL_COLORS: Record<string, string> = {
-    URGENT: "#ef4444",
     DESIGN: "#d946ef",
     BACKEND: "#10b981",
     FRONTEND: "#f97316",

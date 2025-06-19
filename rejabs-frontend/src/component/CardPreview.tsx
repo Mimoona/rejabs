@@ -18,6 +18,9 @@ const CardPreview = ({ card, onClick }: Props) => {
             <h3 className="text-sm font-medium text-gray-800 truncate">{card.cardTitle}</h3>
             <PencilIcon className="h-4 w-4" onClick={onClick}></PencilIcon>
             </div>
+            <div>
+                <p className="text-sm text-gray-600 truncate my-4">{card.description}</p>
+            </div>
 
             <div className="flex items-center gap-1 mt-2">
                 {card.labels.map((label) => (
@@ -31,6 +34,7 @@ const CardPreview = ({ card, onClick }: Props) => {
                 {card.dueDate && (
                     <span title={card.dueDate}>
             <CalendarIcon className="w-4 h-4 text-gray-500" />
+
           </span>
                 )}
             </div>
