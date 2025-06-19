@@ -1,29 +1,57 @@
 import type {Card} from "../types/Card.ts";
 import {Fragment, useState} from "react";
 import {Dialog, Transition} from "@headlessui/react";
+import {LABEL_OPTIONS} from "../enums/Label";
+import {useCard} from "../hooks/useCard.ts";
 
 interface CardDialogProps {
     listId: string;
-    onCreate: (card: Partial<Card>) => void
+    cards: Card[];
     isOpen: boolean;
     onClose: () => void;
 }
 
-const CardDialog = ({listId, onCreate, isOpen, onClose}: CardDialogProps) => {
-    const [cardTitle, setCardTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [labels, setLabels] = useState<string[]>([]);
-    const [dueDate, setDueDate] = useState("");
+const CardDialog = ({listId, cards, isOpen, onClose}: CardDialogProps) => {
+    const [cardTitle, setCardTitle] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [dueDate, setDueDate] = useState<string>("");
+    const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
+    const {createCard, error, setError} = useCard();
 
-    const handleSubmit = () => {
-        if (!cardTitle.trim()) return;
+    const handleCreateCard = async () => {
+        if (!cardTitle.trim()) {
+            setError("Card title is required");
+            return;
+        }
 
-        onCreate({ cardTitle, description, dueDate, labels });
-        setCardTitle("");
-        setDescription("");
-        setDueDate("");
-        setLabels([]);
-        onClose();
+        const newCard: Partial<Card> = {
+            cardTitle: cardTitle.trim(),
+            description: description.trim(),
+            listId,
+            position: cards.length,
+            labels: selectedLabels, // ["URGENT", "DESIGN"]
+            dueDate: dueDate,
+        };
+        try {
+            const createdCard: Partial<Card> = await createCard(newCard);
+            if (createdCard) {
+                setCardTitle("");
+                setDescription("");
+                setSelectedLabels([]);
+                setDueDate(null);
+                onClose();
+            }
+
+        } catch (err) {
+            setError("Failed to create card.");
+        }
+    };
+
+
+    const handleLabelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selected = Array.from(e.target.selectedOptions, (option) => option.value);
+        console.log(selected);
+        setSelectedLabels(selected);
     };
 
 
@@ -39,7 +67,7 @@ const CardDialog = ({listId, onCreate, isOpen, onClose}: CardDialogProps) => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black/30" />
+                    <div className="fixed inset-0 bg-black/30"/>
                 </Transition.Child>
 
                 <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -58,12 +86,14 @@ const CardDialog = ({listId, onCreate, isOpen, onClose}: CardDialogProps) => {
                             </Dialog.Title>
 
                             <div className="space-y-4">
+                                {error && <p className="text-red-500 text-sm">{error}</p>}
                                 <input
                                     type="text"
                                     placeholder="Card title"
                                     className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     value={cardTitle}
                                     onChange={(e) => setCardTitle(e.target.value)}
+                                    required
                                 />
 
                                 <textarea
@@ -76,17 +106,43 @@ const CardDialog = ({listId, onCreate, isOpen, onClose}: CardDialogProps) => {
 
                                 <input
                                     type="date"
+                                    min={new Date().toISOString().split("T")[0]} // today's date onwards
                                     className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     value={dueDate}
                                     onChange={(e) => setDueDate(e.target.value)}
                                 />
 
-                                <input
-                                    type="text"
-                                    placeholder="Comma-separated labels"
-                                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    onChange={(e) => setLabels(e.target.value.split(",").map(l => l.trim()))}
-                                />
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Labels</label>
+                                <select
+                                    multiple
+                                    value={selectedLabels}
+                                    onChange={handleLabelChange}
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                >
+                                    {LABEL_OPTIONS.map((label) => (
+                                        <option key={label.name} value={label.name}>
+                                            {label.name.replace("_", " ")}
+                                        </option>
+                                    ))}
+                                </select>
+                                <p className="text-xs text-gray-500 mt-1">Hold Ctrl (Windows) or Cmd (Mac) to select
+                                    multiple
+                                </p>
+
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {selectedLabels.map(labelName => {
+                                        const labelObj = LABEL_OPTIONS.find(l => l.name === labelName);
+                                        return (
+                                            <span
+                                                key={labelName}
+                                                className="px-2 py-1 text-xs rounded-full text-white"
+                                                style={{backgroundColor: labelObj?.color || "gray"}}
+                                            >
+                                                {labelName.replace("_", " ")}
+                                             </span>
+                                        );
+                                    })}
+                                </div>
                             </div>
 
                             <div className="mt-6 flex justify-end gap-3">
@@ -98,7 +154,7 @@ const CardDialog = ({listId, onCreate, isOpen, onClose}: CardDialogProps) => {
                                 </button>
                                 <button
                                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                                    onClick={handleSubmit}
+                                    onClick={handleCreateCard}
                                 >
                                     Create
                                 </button>

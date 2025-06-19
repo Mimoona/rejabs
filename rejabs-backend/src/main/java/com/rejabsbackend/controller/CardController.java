@@ -29,7 +29,7 @@ public class CardController {
 
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public Card createCard(@RequestBody CardDto cardDto) {
         return cardService.createCard(cardDto);
     }

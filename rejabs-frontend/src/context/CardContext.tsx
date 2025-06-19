@@ -13,6 +13,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
         try {
             const response = await api.get<Card[]>(`/cards`);
             if (response.status === 200) {
+                console.log(response.data);
                 setCards(response.data);
                 setError(null);
             }
@@ -38,7 +39,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
 
     const createCard = async (data: Partial<Card>): Promise<Card | null> => {
         try {
-            const res = await api.post('/cards', data);
+            const res = await api.post('/cards/create', data);
             setCards((prev: Card[]) => [...prev, res.data]);
             return res.data;
         } catch (e: any) {

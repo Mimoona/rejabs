@@ -7,6 +7,7 @@ import com.rejabsbackend.repo.BoardRepository;
 import com.rejabsbackend.repo.CardRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -37,7 +38,9 @@ public class CardService {
                 cardDto.listId(),
                 cardDto.position(),
                 cardDto.labels(),
-                cardDto.dueDate()
+                cardDto.dueDate(),
+                Instant.now(),
+                Instant.now()
         );
 
         return cardRepository.save(card);
@@ -58,7 +61,10 @@ public class CardService {
                 cardDto.listId() != null ? cardDto.listId() : existingCard.listId(),
                 cardDto.position() ,
                 cardDto.labels() != null ? cardDto.labels() : existingCard.labels(),
-                cardDto.dueDate() != null ? cardDto.dueDate() : existingCard.dueDate()
+                cardDto.dueDate() != null ? cardDto.dueDate() : existingCard.dueDate(),
+                existingCard.createdAt(),
+                Instant.now()
+
         );
 
         return cardRepository.save(updatedCard);

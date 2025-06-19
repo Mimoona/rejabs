@@ -87,7 +87,7 @@ const Boards = () => {
                                 board.collaborators.map((collaborator: Collaborator) => (
                                     <img
                                         key={collaborator.collaboratorEmail}
-                                        src={collaborator.collaboratorAvatar}
+                                        src={collaborator.collaboratorAvatar || collaborator.collaboratorName}
                                         alt={collaborator.collaboratorName}
                                         className="w-9 h-9 rounded-full border-2 border-white bg-gray-200"
                                         title={collaborator.collaboratorName}

@@ -1,9 +1,11 @@
 import {useBoardList} from "../hooks/useBoardList.ts";
 import {useParams} from "react-router-dom";
-import {useMemo, useRef, useState} from "react";
+import {JSX, ReactNode, useMemo, useRef, useState} from "react";
 import type {BoardList} from "../types/BoardList.ts";
 import {TrashIcon} from "@heroicons/react/24/outline";
 import DeleteDialog from "./DeleteDialog.tsx";
+import CardList from "./CardList.tsx";
+
 
 export default function BoardList() {
     const {boardId} = useParams<{ boardId: string }>();
@@ -172,13 +174,9 @@ export default function BoardList() {
                                           onConfirm={handleConfirmDelete}
                             ></DeleteDialog>
                         </div>
+                        <CardList listId={list.boardListId}/>
 
-                        <div className="space-y-3">
-                            <div className="bg-gray-100 rounded-lg p-3 shadow-sm">Task 1</div>
-                        </div>
-                        <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                            Add Card
-                        </button>
+
                     </div>
                 ))}
 
