@@ -50,7 +50,7 @@ export default function BoardList() {
                 position: currentBoardLists?.length
             };
 
-            const createdList: Partial<BoardList> = await createBoardList(newList);
+            const createdList: BoardList | null = await createBoardList(newList);
             if (createdList && createdList.boardId === boardId) {
                 //await refreshBoardLists();
                 setListTitle('');
@@ -136,7 +136,6 @@ export default function BoardList() {
                 className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth hide-scrollbar items-start"
                 style={{scrollBehavior: "smooth"}}
             >
-
 
 
                 {currentBoardLists.map(list => (

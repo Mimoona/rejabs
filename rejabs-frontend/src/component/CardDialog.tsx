@@ -33,7 +33,7 @@ const CardDialog = ({listId, cards, isOpen, onClose}: CardDialogProps) => {
             dueDate: dueDate,
         };
         try {
-            const createdCard: Partial<Card> = await createCard(newCard);
+            const createdCard: Card | null = await createCard(newCard);
             if (createdCard) {
                 setCardTitle("");
                 setDescription("");
@@ -42,8 +42,8 @@ const CardDialog = ({listId, cards, isOpen, onClose}: CardDialogProps) => {
                 onClose();
             }
 
-        } catch (err) {
-            setError("Failed to create card.");
+        } catch (err: unknown) {
+            setError("Failed to create card." + err);
         }
     };
 

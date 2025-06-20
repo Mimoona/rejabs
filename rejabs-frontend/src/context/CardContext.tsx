@@ -42,7 +42,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
             const res = await api.post('/cards/create', data);
             setCards((prev: Card[]) => [...prev, res.data]);
             return res.data;
-        } catch (e: any) {
+        } catch (e: unknown) {
             console.error("Failed to create a card", e);
             setError(e.message ?? "Unknown error");
             return null;
