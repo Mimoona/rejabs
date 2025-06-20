@@ -14,4 +14,6 @@ export type BoardListContextType = {
     deleteBoardList: (id: string) => Promise<boolean>;
     fetchLists: () => Promise<void>;
     refreshBoardLists: () => Promise<void>;
+    error: string;
+    setError: (error:string) => void
 }

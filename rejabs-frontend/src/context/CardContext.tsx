@@ -17,7 +17,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
                 setCards(response.data);
                 setError(null);
             }
-        } catch (e: any) {
+        } catch (e: Error) {
             console.error("Failed to fetch Cards", e);
             setCards([]);
             setError(e.message ?? "Unknown error");
@@ -42,7 +42,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
             const res = await api.post('/cards/create', data);
             setCards((prev: Card[]) => [...prev, res.data]);
             return res.data;
-        } catch (e: unknown) {
+        } catch (e: Error) {
             console.error("Failed to create a card", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -58,7 +58,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
                 );
             }
             return res.data;
-        } catch (e: unknown) {
+        } catch (e: Error) {
             console.error("Failed to update card", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -70,7 +70,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
             await api.delete(`/cards/${cardId}`);
             setCards((prevCards: Card[]) => prevCards.filter(card => card.cardId !== cardId));
             return true;
-        } catch (e: unknown) {
+        } catch (e: Error) {
             console.error("Failed to delete card", e);
             setError(e.message ?? "Unknown error");
             return false;

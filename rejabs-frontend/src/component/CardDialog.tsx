@@ -38,7 +38,7 @@ const CardDialog = ({listId, cards, isOpen, onClose}: CardDialogProps) => {
                 setCardTitle("");
                 setDescription("");
                 setSelectedLabels([]);
-                setDueDate(null);
+                setDueDate("");
                 onClose();
             }
 
