@@ -20,7 +20,7 @@ const Boards = () => {
     }
 
     const handleTitleUpdate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        setError(null);
+        setError("");
 
         if (e.key === 'Enter') {
             const newTitle = e.currentTarget.value.trim();

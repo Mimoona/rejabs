@@ -1,8 +1,8 @@
 import type {Card} from "../types/Card.ts";
 import {useDashboardData} from "../hooks/useDashboardData.tsx";
-import {JSX} from "react";
-import { CalendarDaysIcon, ClockIcon, PencilSquareIcon, TagIcon } from "@heroicons/react/24/solid";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import type {JSX} from "react";
+import {CalendarDaysIcon, ClockIcon, PencilSquareIcon, TagIcon} from "@heroicons/react/24/solid";
+import {PieChart, Pie, Cell, Tooltip, ResponsiveContainer} from "recharts";
 
 
 const LABEL_COLORS: Record<string, string> = {
@@ -24,7 +24,7 @@ const LABEL_COLORS: Record<string, string> = {
 };
 
 const Home = () => {
-    const { upcoming, overdue, recent, labelCounts } = useDashboardData();
+    const {upcoming, overdue, recent, labelCounts} = useDashboardData();
 
     const pieData = Object.entries(labelCounts).map(([label, count]) => ({
         name: label.replace("_", " "),
@@ -76,11 +76,11 @@ const Home = () => {
 
 
 function DashboardCard({
-    title,
-    icon,
-    count,
-    children,
-}: {
+                           title,
+                           icon,
+                           count,
+                           children,
+                       }: {
     title: string;
     icon: React.ReactNode;
     count: number;
@@ -100,7 +100,7 @@ function DashboardCard({
     );
 }
 
-function TasksSummary({ cards }: { cards: Card[] }) {
+function TasksSummary({cards}: { cards: Card[] }) {
     if (!cards.length) return <p className="text-gray-400">No cards found.</p>;
 
     return (
@@ -117,7 +117,7 @@ function TasksSummary({ cards }: { cards: Card[] }) {
                                 <span
                                     key={label}
                                     className="text-white text-xs px-2 py-0.5 rounded-full"
-                                    style={{ backgroundColor: LABEL_COLORS[label] || "gray" }}
+                                    style={{backgroundColor: LABEL_COLORS[label] || "gray"}}
                                 >
                   {label.replace("_", " ")}
                 </span>
@@ -129,4 +129,5 @@ function TasksSummary({ cards }: { cards: Card[] }) {
         </ul>
     );
 }
+
 export default Home;

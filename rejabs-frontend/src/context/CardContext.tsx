@@ -7,7 +7,7 @@ export const CardContext = createContext<CardContextType | undefined>(undefined)
 export const CardProvider = ({children}: { children: React.ReactNode }) => {
 
     const [cards, setCards] = useState<Card[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string >("");
 
     const fetchCards = async () => {
         try {
@@ -15,9 +15,9 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
             if (response.status === 200) {
                 console.log(response.data);
                 setCards(response.data);
-                setError(null);
+                setError("");
             }
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Failed to fetch Cards", e);
             setCards([]);
             setError(e.message ?? "Unknown error");
@@ -42,7 +42,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
             const res = await api.post('/cards/create', data);
             setCards((prev: Card[]) => [...prev, res.data]);
             return res.data;
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Failed to create a card", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -58,7 +58,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
                 );
             }
             return res.data;
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Failed to update card", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -70,7 +70,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
             await api.delete(`/cards/${cardId}`);
             setCards((prevCards: Card[]) => prevCards.filter(card => card.cardId !== cardId));
             return true;
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Failed to delete card", e);
             setError(e.message ?? "Unknown error");
             return false;

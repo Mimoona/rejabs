@@ -13,9 +13,9 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
             const response = await api.get<BoardList[]>(`/board-list`);
             if (response.status === 200) {
                 setBoardLists(response.data);
-                setError(null);
+                setError("");
             }
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Failed to fetch Board Lists", e);
             setBoardLists([]);
             setError(e.message ?? "Unknown error");
@@ -40,7 +40,7 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
             const res = await api.post('/board-list/create', data);
             setBoardLists((prev: BoardList[]) => [...prev, res.data]);
             return res.data;
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Failed to create a board list", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -57,7 +57,7 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
                 );
             }
             return res.data;
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Failed to update board list", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -69,7 +69,7 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
             await api.delete(`/board-list/${listId}`);
             setBoardLists((prevBoardLists: BoardList[]) => prevBoardLists.filter(boardList => boardList.boardListId !== listId));
             return true;
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Failed to delete board list", e);
             setError(e.message ?? "Unknown error");
             return false;

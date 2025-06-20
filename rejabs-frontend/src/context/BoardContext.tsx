@@ -8,7 +8,7 @@ export const BoardContext = createContext<BoardContextType | undefined>(undefine
 export const BoardProvider = ({children}: { children: React.ReactNode }) => {
 
     const [boards, setBoards] = useState<Board[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string >("");
 
 
     const fetchBoards = async () => {
@@ -58,7 +58,7 @@ export const BoardProvider = ({children}: { children: React.ReactNode }) => {
                 prevBoards.map(board => (board.boardId === id ? res.data : board))
             );
             return res.data;
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Update board failed", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -70,7 +70,7 @@ export const BoardProvider = ({children}: { children: React.ReactNode }) => {
             await api.delete(`/boards/${id}`);
             setBoards((prevBoards: Board[]) => prevBoards.filter(board => board.boardId !== id));
             return true;
-        } catch (e: Error) {
+        } catch (e: any) {
             console.error("Delete board failed", e);
             setError(e.message ?? "Unknown error");
             return false;

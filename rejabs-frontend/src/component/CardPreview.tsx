@@ -16,7 +16,7 @@ const CardPreview = ({card, onClick}: Props) => {
             onClick={onClick}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                    onClick(e);
+                    onClick();
                 }
             }}
             className="bg-gray-200 hover:bg-gray-300 rounded p-2 cursor-pointer shadow-sm transition"
