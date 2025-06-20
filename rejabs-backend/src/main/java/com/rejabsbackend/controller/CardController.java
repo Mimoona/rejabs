@@ -44,7 +44,4 @@ public class CardController {
     public boolean deleteCard(@PathVariable String cardId) throws IdNotFoundException {
         return cardService.deleteCardById(cardId);
     }
-
-
-
 }
