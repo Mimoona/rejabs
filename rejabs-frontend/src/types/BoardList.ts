@@ -8,7 +8,7 @@ export type BoardList = {
 
 export type BoardListContextType = {
     boardLists: BoardList[];
-    setBoardList: (boardList: BoardList[]) => void
+    setBoardLists: (boardList: BoardList[]) => void
     getBoardList: (id: string) => Promise<BoardList>;
     createBoardList: (data: Partial<BoardList>) => Promise<BoardList | null>;
     updateBoardList: (id: string, data: Partial<BoardList>) => Promise<BoardList | null>;
