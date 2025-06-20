@@ -1,8 +1,7 @@
 import type {Card} from "../types/Card.ts";
-import {useDashboardData} from "../hooks/useDashboardData.tsx";
 import type {JSX} from "react";
-import {CalendarDaysIcon, ClockIcon, PencilSquareIcon, TagIcon} from "@heroicons/react/24/solid";
-import {PieChart, Pie, Cell, Tooltip, ResponsiveContainer} from "recharts";
+import {CalendarDaysIcon, ClockIcon, PencilSquareIcon} from "@heroicons/react/24/solid";
+import {useDashboardData} from "../hooks/useDashboardData.tsx";
 
 
 const LABEL_COLORS: Record<string, string> = {
@@ -24,13 +23,8 @@ const LABEL_COLORS: Record<string, string> = {
 };
 
 const Home = () => {
-    const {upcoming, overdue, recent, labelCounts} = useDashboardData();
+     const {upcoming, overdue, recent} = useDashboardData();
 
-    // const pieData = Object.entries(labelCounts).map(([label, count]) => ({
-    //     name: label.replace("_", " "),
-    //     value: count,
-    //     color: label[label] || "#94a3b8",
-    // }));
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-50 p-6 items-center">
@@ -52,23 +46,7 @@ const Home = () => {
                     <TasksSummary cards={recent}/>
                 </DashboardCard>
 
-                {/*<DashboardCard title=" Label Summary" icon={<TagIcon className="h-6 w-6 text-yellow-500"/>}*/}
-                {/*               count={pieData.length}>*/}
-                {/*    {pieData.length > 0 ? (*/}
-                {/*        <ResponsiveContainer width="100%" height={200}>*/}
-                {/*            <PieChart>*/}
-                {/*                <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={80}>*/}
-                {/*                    {pieData.map((entry, index) => (*/}
-                {/*                        <Cell key={`cell-${index}`} fill={entry.color}/>*/}
-                {/*                    ))}*/}
-                {/*                </Pie>*/}
-                {/*                <Tooltip/>*/}
-                {/*            </PieChart>*/}
-                {/*        </ResponsiveContainer>*/}
-                {/*    ) : (*/}
-                {/*        <p className="text-gray-400 text-sm">No label data available.</p>*/}
-                {/*    )}*/}
-                {/*</DashboardCard>*/}
+
             </div>
         </div>
     )
