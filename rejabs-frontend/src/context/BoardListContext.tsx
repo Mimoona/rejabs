@@ -6,7 +6,7 @@ export const BoardListContext = createContext<BoardListContextType | undefined>(
 export const BoardListProvider = ({children}: { children: React.ReactNode }) => {
 
     const [boardLists, setBoardLists] = useState<BoardList[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string>("");
 
     const fetchLists = async () => {
         try {
@@ -15,7 +15,7 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
                 setBoardLists(response.data);
                 setError(null);
             }
-        } catch (e: unknown) {
+        } catch (e: Error) {
             console.error("Failed to fetch Board Lists", e);
             setBoardLists([]);
             setError(e.message ?? "Unknown error");
@@ -40,7 +40,7 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
             const res = await api.post('/board-list/create', data);
             setBoardLists((prev: BoardList[]) => [...prev, res.data]);
             return res.data;
-        } catch (e: unknown) {
+        } catch (e: Error) {
             console.error("Failed to create a board list", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -51,13 +51,13 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
         console.log(boardListId, data);
         try {
             const res = await api.put(`/board-list/${boardListId}`, data);
-            if(res){
+            if (res) {
                 setBoardLists((prevBoardLists: BoardList[]) =>
                     prevBoardLists.map(boardList => (boardList.boardListId === boardListId ? res.data : boardList))
                 );
             }
             return res.data;
-        } catch (e: unknown) {
+        } catch (e: Error) {
             console.error("Failed to update board list", e);
             setError(e.message ?? "Unknown error");
             return null;
@@ -69,7 +69,7 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
             await api.delete(`/board-list/${listId}`);
             setBoardLists((prevBoardLists: BoardList[]) => prevBoardLists.filter(boardList => boardList.boardListId !== listId));
             return true;
-        } catch (e: unknown) {
+        } catch (e: Error) {
             console.error("Failed to delete board list", e);
             setError(e.message ?? "Unknown error");
             return false;
