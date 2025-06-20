@@ -13,7 +13,7 @@ export type Card = {
 export type CardContextType = {
     cards: Card[],
     setCards: (cards: Card[]) => void
-    fetchCards: () => Promise<Card>,
+    fetchCards: () => Promise<void>,
     getCard: (id: string) => Promise<Card>,
     createCard: (data: Partial<Card>) => Promise<Card | null>,
     updateCard: (id: string, data: Partial<Card>) => Promise<Card | null>,
