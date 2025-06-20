@@ -26,7 +26,6 @@ public class CardService {
     public Card getCardById(String cardId) throws IdNotFoundException {
         return cardRepository.findById(cardId)
                 .orElseThrow(() -> new IdNotFoundException(cardId, "Card"));
-
     }
 
     public Card createCard(CardDto cardDto) {
@@ -45,20 +44,19 @@ public class CardService {
         return cardRepository.save(card);
     }
 
-    public Card updateCard(String cardId, CardDto cardDto) throws IdNotFoundException{
-            Card existingCard = cardRepository.findById(cardId)
-                    .orElseThrow(() -> new IdNotFoundException(cardId, "Card"));
+    public Card updateCard(String cardId, CardDto cardDto) throws IdNotFoundException {
 
-            if (existingCard == null) {
-                return null;
-            }
+        System.out.println("Searching for card with ID: " + cardId);
+
+        Card existingCard = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IdNotFoundException(cardId, "Card"));
 
         Card updatedCard = new Card(
                 existingCard.cardId(),
                 cardDto.cardTitle() != null ? cardDto.cardTitle() : existingCard.cardTitle(),
                 cardDto.description() != null ? cardDto.description() : existingCard.description(),
                 cardDto.listId() != null ? cardDto.listId() : existingCard.listId(),
-                cardDto.position() ,
+                cardDto.position(),
                 cardDto.labels() != null ? cardDto.labels() : existingCard.labels(),
                 cardDto.dueDate() != null ? cardDto.dueDate() : existingCard.dueDate(),
                 existingCard.createdAt(),
@@ -69,12 +67,12 @@ public class CardService {
         return cardRepository.save(updatedCard);
     }
 
-    public boolean deleteCardById(String cardId) {
+    public boolean deleteCardById(String cardId) throws IdNotFoundException{
         if (cardRepository.existsById(cardId)) {
             cardRepository.deleteById(cardId);
             return true;
         } else {
-            return false;
+            throw new IdNotFoundException(cardId, "Card");
         }
     }
 }

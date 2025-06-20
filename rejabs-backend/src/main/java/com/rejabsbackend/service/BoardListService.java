@@ -44,7 +44,7 @@ public class BoardListService {
         BoardList boardListExist = boardListRepository.findById(boardListId)
                 .orElseThrow(() -> new IdNotFoundException(boardListId, "Board List"));
 
-        BoardList updatedBoardList =  new BoardList(
+        BoardList updatedBoardList = new BoardList(
                 boardListExist.boardListId(),
                 boardListDto.listTitle(),
                 boardListExist.boardId(),
@@ -54,7 +54,7 @@ public class BoardListService {
     }
 
     public boolean deleteBoardListById(String boardListId) throws IdNotFoundException {
-        if(boardListRepository.existsById(boardListId)) {
+        if (boardListRepository.existsById(boardListId)) {
             boardListRepository.deleteById(boardListId);
             return true;
         }
