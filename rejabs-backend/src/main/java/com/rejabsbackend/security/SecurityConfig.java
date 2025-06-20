@@ -44,7 +44,7 @@ public class SecurityConfig {
                 )
 
                 .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("http://localhost:5173/home", true))
+                        .defaultSuccessUrl("https://rejabs-latest.onrender.com", true))
                 .exceptionHandling(error -> error
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         );
