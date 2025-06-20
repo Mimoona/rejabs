@@ -1,4 +1,4 @@
-name: "rejabs"
+name: "Rejabs CI/CD Pipeline"
 
 on:
   push:

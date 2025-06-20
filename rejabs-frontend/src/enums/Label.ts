@@ -1,0 +1,19 @@
+export const LABEL_OPTIONS = [
+    { name: "HIGH_PRIORITY", color: "red" },
+    { name: "MEDIUM_PRIORITY", color: "coral" },
+    { name: "LOW_PRIORITY", color: "yellow" },
+    { name: "DESIGN", color: "purple" },
+    { name: "BACKEND", color: "green" },
+    { name: "FRONTEND", color: "orange" },
+    { name: "QA", color: "olivedrab" },
+    { name: "BUG", color: "darkorange" },
+    { name: "FEATURE", color: "#d243d2" },
+    { name: "PLAN", color: "#328cd9" },
+    { name: "TODO", color: "#23b07f" },
+    { name: "IN_PROGRESS", color: "chocolate" },
+    { name: "DONE", color: "limegreen" },
+    { name: "BLOCKER", color: "tomato" },
+    { name: "REVIEW", color: "green" },
+] as const;
+
+export type Label = typeof LABEL_OPTIONS[number];

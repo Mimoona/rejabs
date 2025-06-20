@@ -4,6 +4,7 @@ import {useMemo, useRef, useState} from "react";
 import type {BoardList} from "../types/BoardList.ts";
 import {TrashIcon} from "@heroicons/react/24/outline";
 import DeleteDialog from "./DeleteDialog.tsx";
+import CardList from "./CardList.tsx";
 
 export default function BoardList() {
     const {boardId} = useParams<{ boardId: string }>();
@@ -114,7 +115,7 @@ export default function BoardList() {
 
     return (
 
-        <div className="flex-1 h-full overflow-y-auto">
+        <div className="flex-1 overflow-hidden relative">
             {/* Scroll Buttons */}
             <button
                 className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-200 rounded-full p-2 shadow hover:bg-gray-300"
@@ -132,13 +133,16 @@ export default function BoardList() {
             {/* Scrollable list container */}
             <div
                 ref={scrollRef}
-                className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth hide-scrollbar"
+                className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth hide-scrollbar items-start"
                 style={{scrollBehavior: "smooth"}}
             >
+
+
+
                 {currentBoardLists.map(list => (
                     <div
                         key={list.boardListId}
-                        className="w-80 flex-shrink-0 bg-white rounded-2xl shadow p-4"
+                        className="w-80 bg-white rounded-2xl shadow p-4 flex flex-col"
                     >
                         <div className="flex items-center justify-between w-full mb-3">
 
@@ -148,7 +152,7 @@ export default function BoardList() {
                                     defaultValue={list.listTitle}
                                     autoFocus
                                     className="w-full p-2 text-lg font-semibold text-gray-700 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                                    onBlur={(e) => handleUpdateListTitle(list, e)}
+                                    onBlur={(e) => handleUpdateListTitle(list, e.target.value)}
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter") handleUpdateListTitle(list, e.currentTarget.value);
                                         else if (e.key === "Escape") setEditingListId(null);
@@ -172,13 +176,7 @@ export default function BoardList() {
                                           onConfirm={handleConfirmDelete}
                             ></DeleteDialog>
                         </div>
-
-                        <div className="space-y-3">
-                            <div className="bg-gray-100 rounded-lg p-3 shadow-sm">Task 1</div>
-                        </div>
-                        <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                            Add Card
-                        </button>
+                        <CardList listId={list.boardListId}/>
                     </div>
                 ))}
 
@@ -215,7 +213,7 @@ export default function BoardList() {
                             setListTitle("");
                             setEditingListId(null);
                         }}
-                        className="w-64 flex-shrink-0 bg-indigo-100 text-indigo-700 rounded-2xl p-4 hover:bg-indigo-200 transition"
+                        className="w-64 bg-indigo-100 text-blue-700 rounded-2xl p-4 hover:bg-indigo-200 transition"
                     >
                         + Add another list
                     </button>
