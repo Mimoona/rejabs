@@ -7,7 +7,7 @@ export const CardContext = createContext<CardContextType | undefined>(undefined)
 export const CardProvider = ({children}: { children: React.ReactNode }) => {
 
     const [cards, setCards] = useState<Card[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string >("");
 
     const fetchCards = async () => {
         try {
@@ -15,7 +15,7 @@ export const CardProvider = ({children}: { children: React.ReactNode }) => {
             if (response.status === 200) {
                 console.log(response.data);
                 setCards(response.data);
-                setError(null);
+                setError("");
             }
         } catch (e: any) {
             console.error("Failed to fetch Cards", e);

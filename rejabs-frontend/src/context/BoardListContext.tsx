@@ -13,7 +13,7 @@ export const BoardListProvider = ({children}: { children: React.ReactNode }) => 
             const response = await api.get<BoardList[]>(`/board-list`);
             if (response.status === 200) {
                 setBoardLists(response.data);
-                setError(null);
+                setError("");
             }
         } catch (e: any) {
             console.error("Failed to fetch Board Lists", e);

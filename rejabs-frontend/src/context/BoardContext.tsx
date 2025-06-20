@@ -8,7 +8,7 @@ export const BoardContext = createContext<BoardContextType | undefined>(undefine
 export const BoardProvider = ({children}: { children: React.ReactNode }) => {
 
     const [boards, setBoards] = useState<Board[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string >("");
 
 
     const fetchBoards = async () => {
