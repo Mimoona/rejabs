@@ -16,7 +16,7 @@ export const BoardProvider = ({children}: { children: React.ReactNode }) => {
             const response = await api.get<Board[]>('/boards');
             if (response.status === 200) {
                 setBoards(response.data);
-                setError(null);
+                setError("");
             }
         } catch (e: any) {
             console.error("Failed to fetch Boards", e);

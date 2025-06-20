@@ -9,7 +9,7 @@ import type {Card} from "../types/Card.ts";
 
 const CardList = ({listId}: { listId: string }) => {
     const [isCardDialogOpen, setIsCardDialogOpen] = useState(false);
-    const [selectedCard, setSelectedCard] = useState<Card>();
+    const [selectedCard, setSelectedCard] = useState<Card |null>();
     const {cards} = useCard();
 
     // Filter cards by this list
