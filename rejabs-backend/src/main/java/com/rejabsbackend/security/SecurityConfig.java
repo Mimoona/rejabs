@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:5173"));
+                    config.setAllowedOrigins(List.of("http://localhost:5173", "https://rejabs-latest.onrender.com"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                     config.setAllowedHeaders(List.of("*"));
                     config.setAllowCredentials(true);
@@ -44,7 +44,7 @@ public class SecurityConfig {
                 )
 
                 .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("http://localhost:5173/home", true))
+                        .defaultSuccessUrl("https://rejabs-latest.onrender.com/home", true))
                 .exceptionHandling(error -> error
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
         );
