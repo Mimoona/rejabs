@@ -1,8 +1,8 @@
 import type {Card} from "../types/Card.ts";
 import {useDashboardData} from "../hooks/useDashboardData.tsx";
 import type {JSX} from "react";
-import {CalendarDaysIcon, ClockIcon, PencilSquareIcon, TagIcon} from "@heroicons/react/24/solid";
-import {PieChart, Pie, Cell, Tooltip, ResponsiveContainer} from "recharts";
+import {CalendarDaysIcon, ClockIcon, PencilSquareIcon} from "@heroicons/react/24/solid";
+// import {PieChart, Pie, Cell, Tooltip, ResponsiveContainer} from "recharts";
 
 
 const LABEL_COLORS: Record<string, string> = {
@@ -24,7 +24,7 @@ const LABEL_COLORS: Record<string, string> = {
 };
 
 const Home = () => {
-    const {upcoming, overdue, recent, labelCounts} = useDashboardData();
+    // const {upcoming, overdue, recent, labelCounts} = useDashboardData();
 
     // const pieData = Object.entries(labelCounts).map(([label, count]) => ({
     //     name: label.replace("_", " "),
