@@ -11,7 +11,8 @@
 /rejabs-backend/mvnw
 /rejabs-backend/mvnw.cmd
 /rejabs-backend/.mvn
-
+/rejabs-backend/src/main/resources/application-dev.properties
+/rejabs-backend/src/main/resources/application-prod.properties
 
 #Frontend
 
@@ -19,3 +20,4 @@
 /rejabs-frontend/dist
 /rejabs-frontend/dist-ssr
 /rejabs-frontend/*.local
+/rejabs-frontend/.env*
