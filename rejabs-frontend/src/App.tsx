@@ -7,11 +7,13 @@ import Login from "./pages/Login.tsx";
 import Profile from "./pages/Profile.tsx";
 import Boards from "./pages/Boards.tsx";
 import Home from "./pages/Home.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
 function App() {
 
     return (
         <Routes>
+            <Route path="*" element={<NotFound/>}/>
             <Route index element={<LandingPage/>}/>
             <Route path="/signup" element={<Login/>}/>
             <Route path="/" element={<Layout/>}>

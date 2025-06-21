@@ -1,6 +1,7 @@
 package com.rejabsbackend.security;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -11,18 +12,26 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Value("${app.oauth2.success-url}")
+    private String successUrl;
+
+    @Value("${app.cors.allowed-origins}")
+    private String allowedOrigin;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        //List<String> origins = Arrays.asList(allowedOrigins.split(","));
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:5173", "https://rejabs-latest.onrender.com"));
+                    config.setAllowedOrigins(List.of(allowedOrigin));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                     config.setAllowedHeaders(List.of("*"));
                     config.setAllowCredentials(true);
@@ -45,7 +54,7 @@ public class SecurityConfig {
 
                 .oauth2Login(oauth -> oauth
 
-                        .defaultSuccessUrl("https://rejabs-latest.onrender.com/home", true))
+                        .defaultSuccessUrl(successUrl, true))
 
                 .exceptionHandling(error -> error
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))

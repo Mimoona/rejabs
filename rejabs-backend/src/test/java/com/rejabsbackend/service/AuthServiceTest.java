@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
+@ActiveProfiles("test")
 class AuthServiceTest {
 
     @Autowired
