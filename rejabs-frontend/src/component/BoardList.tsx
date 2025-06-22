@@ -35,6 +35,8 @@ export default function BoardList() {
         return <div>Loading board...</div>;
     }
 
+    // Create BoardList
+
     const handleCreateBoardList = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             const newListTitle = e.currentTarget.value.trim();
