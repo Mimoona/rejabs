@@ -29,8 +29,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         //List<String> origins = Arrays.asList(allowedOrigins.split(","));
 
-        System.out.println("successUrl: " + successUrl);
-        System.out.println("allowedOrigin: " + allowedOrigin);
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
