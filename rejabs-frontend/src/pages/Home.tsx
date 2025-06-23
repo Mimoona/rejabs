@@ -1,30 +1,18 @@
-import type {Card} from "../types/Card.ts";
-import type {JSX} from "react";
-import {CalendarDaysIcon, ClockIcon, PencilSquareIcon} from "@heroicons/react/24/solid";
+import {CalendarDaysIcon, ClockIcon, PencilSquareIcon, TagIcon} from "@heroicons/react/24/solid";
 import {useDashboardData} from "../hooks/useDashboardData.tsx";
-
-
-const LABEL_COLORS: Record<string, string> = {
-    DESIGN: "#d946ef",
-    BACKEND: "#10b981",
-    FRONTEND: "#f97316",
-    BLOCKED: "#f87171",
-    REVIEW: "#6366f1",
-    QA: "#14b8a6",
-    TODO: "#facc15",
-    IN_PROGRESS: "#fb923c",
-    DONE: "#22c55e",
-    HIGH_PRIORITY: "#e11d48",
-    MEDIUM_PRIORITY: "#fbbf24",
-    LOW_PRIORITY: "#4ade80",
-    BUG: "#dc2626",
-    FEATURE: "#10b981",
-    PLAN: "#fde68a",
-};
+import {PieChart, Pie, Cell, Tooltip, ResponsiveContainer} from "recharts";
+import {getColorFromLabel} from "../utility/LabelColor.ts";
+import TasksSummary from "../component/TasksSummary.tsx";
+import type {JSX} from "react";
 
 const Home = () => {
-     const {upcoming, overdue, recent} = useDashboardData();
+    const {upcoming, overdue, recent, labelCounts} = useDashboardData();
 
+    const pieData = Object.entries(labelCounts).map(([label, count]) => ({
+        name: label.replace("_", " "),
+        value: count,
+        color: getColorFromLabel(label),
+    }));
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-50 p-6 items-center">
@@ -44,6 +32,23 @@ const Home = () => {
                 <DashboardCard title=" Recent Activity" icon={<PencilSquareIcon className="h-6 w-6 text-green-500"/>}
                                count={recent.length}>
                     <TasksSummary cards={recent}/>
+                </DashboardCard>
+                <DashboardCard title=" Label Summary" icon={<TagIcon className="h-6 w-6 text-yellow-500"/>}
+                               count={pieData.length}>
+                    {pieData.length > 0 ? (
+                        <ResponsiveContainer width="100%" height={200}>
+                            <PieChart>
+                                <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={80}>
+                                    {pieData.map((entry) => (
+                                        <Cell key={`cell-${entry.name}`} fill={entry.color}/>
+                                    ))}
+                                </Pie>
+                                <Tooltip/>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    ) : (
+                        <p className="text-gray-400 text-sm">No label data available.</p>
+                    )}
                 </DashboardCard>
 
 
@@ -75,36 +80,6 @@ function DashboardCard({
             </div>
             <div className="text-sm text-gray-600 flex-1 overflow-auto">{children}</div>
         </div>
-    );
-}
-
-function TasksSummary({cards}: { cards: Card[] }) {
-    if (!cards.length) return <p className="text-gray-400">No cards found.</p>;
-
-    return (
-        <ul className="space-y-2">
-            {cards.map((card) => (
-                <li key={card.cardId} className="border border-gray-200 rounded p-2 hover:bg-gray-50">
-                    <p className="font-medium text-gray-800 truncate">{card.cardTitle}</p>
-                    {card.dueDate && (
-                        <p className="text-xs text-gray-500">Due: {new Date(card.dueDate).toLocaleDateString()}</p>
-                    )}
-                    {card.labels.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-1">
-                            {card.labels.map((label) => (
-                                <span
-                                    key={label}
-                                    className="text-white text-xs px-2 py-0.5 rounded-full"
-                                    style={{backgroundColor: LABEL_COLORS[label] || "gray"}}
-                                >
-                  {label.replace("_", " ")}
-                </span>
-                            ))}
-                        </div>
-                    )}
-                </li>
-            ))}
-        </ul>
     );
 }
 

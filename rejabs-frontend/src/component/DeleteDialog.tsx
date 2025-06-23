@@ -2,20 +2,27 @@ import type {Board} from "../types/Board.ts";
 import type {BoardList} from "../types/BoardList.ts";
 import {Fragment} from "react";
 import {Dialog, Transition} from "@headlessui/react";
+import type {Card} from "../types/Card.ts";
 
 interface DeleteDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    item?: Board | BoardList;
+    item?: Board | BoardList | Card;
     onConfirm: () => void;
 }
-const DeleteDialog = ({isOpen, onClose, item, onConfirm}: DeleteDialogProps)=>{
 
-    const itemTitle = (item && 'title' in item)
-        ? item.title
-        : item && 'listTitle' in item
-            ? item.listTitle
-            : 'this item';
+const DeleteDialog = ({isOpen, onClose, item, onConfirm}: DeleteDialogProps) => {
+    if (!item) return null;
+
+    let itemTitle = 'untitled';
+
+    if (item && 'title' in item) {
+        itemTitle = item.title;
+    } else if (item && 'listTitle' in item) {
+        itemTitle = item.listTitle;
+    } else if (item && 'cardTitle' in item) {
+        itemTitle = item.cardTitle;
+    }
 
 
     return (
@@ -30,7 +37,7 @@ const DeleteDialog = ({isOpen, onClose, item, onConfirm}: DeleteDialogProps)=>{
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black/25" />
+                    <div className="fixed inset-0 bg-black/25"/>
                 </Transition.Child>
 
                 <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -43,7 +50,9 @@ const DeleteDialog = ({isOpen, onClose, item, onConfirm}: DeleteDialogProps)=>{
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                     >
-                        <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                        <Dialog.Panel
+                            className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+
                             <Dialog.Title className="text-lg font-medium text-gray-900">
                                 Delete {itemTitle}?
                             </Dialog.Title>

@@ -9,8 +9,8 @@ const Layout = () => {
     const navigate = useNavigate();
     const [openUserMenu, setOpenUserMenu] = useState(false);
     const [openBoardsMenu, setOpenBoardsMenu] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null); // For user menu
-    const boardsMenuRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement |undefined>(undefined); // For user menu
+    const boardsMenuRef = useRef<HTMLDivElement|undefined>(undefined);
 
     const {boards} = useBoard();
 
@@ -47,7 +47,7 @@ const Layout = () => {
                         <Link
                             to="/home"
                             className="ml-20"
-                        >Home</Link>
+                        >Dashboard</Link>
                         <div className="relative" ref={boardsMenuRef}>
                             <button
                                 onClick={() => setOpenBoardsMenu(!openBoardsMenu)}

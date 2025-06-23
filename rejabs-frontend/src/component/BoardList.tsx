@@ -35,6 +35,8 @@ export default function BoardList() {
         return <div>Loading board...</div>;
     }
 
+    // Create BoardList
+
     const handleCreateBoardList = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             const newListTitle = e.currentTarget.value.trim();
@@ -117,23 +119,26 @@ export default function BoardList() {
 
         <div className="flex-1 overflow-hidden relative">
             {/* Scroll Buttons */}
-            <button
-                className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-200 rounded-full p-2 shadow hover:bg-gray-300"
-                onClick={() => scroll("left")}
-            >
-                ←
-            </button>
-            <button
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-200 rounded-full p-2 shadow hover:bg-gray-300"
-                onClick={() => scroll("right")}
-            >
-                →
-            </button>
+            <div className="flex items-center">
+                <button
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 z-1000 bg-gray-200 rounded-full p-2 shadow hover:bg-gray-300"
+                    onClick={() => scroll("left")}
+                >
+                    ←
+                </button>
+                <button
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 z-1000 bg-gray-200 rounded-full p-2 shadow hover:bg-gray-300"
+                    onClick={() => scroll("right")}
+                >
+                    →
+                </button>
+            </div>
+
 
             {/* Scrollable list container */}
             <div
                 ref={scrollRef}
-                className="flex gap-4 w-full overflow-x-auto pb-4 scroll-smooth hide-scrollbar items-start"
+                className="flex gap-4 w-full left-0 overflow-x-auto pb-4 px-9 scroll-smooth hide-scrollbar items-start"
                 style={{scrollBehavior: "smooth"}}
             >
 
