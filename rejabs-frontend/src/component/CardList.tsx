@@ -23,7 +23,7 @@ const CardList = ({listId}: { listId: string }) => {
         return <div>Loading board...</div>;
     }
 
-    const handleDropOnDelete = (e) => {
+    const handleDropOnDelete = (e: any) => {
         e.preventDefault();
         const cardId = e.dataTransfer.getData("card-id");
         const card = cards.find((c) => c.cardId === cardId);
@@ -32,7 +32,7 @@ const CardList = ({listId}: { listId: string }) => {
             setIsDeleteDialogOpen(true); // open confirmation dialog
         }
     };
-    const handleConfirmDelete = async() => {
+    const handleConfirmDelete = async () => {
         if (cardToDelete) {
             await deleteCard(cardToDelete.cardId);
             setIsDeleteDialogOpen(false);
