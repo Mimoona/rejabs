@@ -3,15 +3,22 @@ import {useState} from "react";
 import CreateBoardDialog from "../component/CreateBoardDialog.tsx";
 import {useBoard} from "../hooks/useBoard.ts";
 import {UserIcon, UserPlusIcon} from "@heroicons/react/16/solid";
-import type {Collaborator} from "../types/Board.ts";
+import type {Board, Collaborator} from "../types/Board.ts";
 import BoardList from "../component/BoardList.tsx";
 import {ExclamationCircleIcon} from "@heroicons/react/24/outline";
+import {TrashIcon} from "@heroicons/react/24/outline";
+import DeleteDialog from "../component/DeleteDialog.tsx";
+
+
+
 
 const Boards = () => {
     const {boardId} = useParams();
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-    const {boards, updateBoard, refreshBoards, error, setError} = useBoard();
+    const {boards, updateBoard, deleteBoard, refreshBoards, error, setError} = useBoard();
     const [isEditing, setIsEditing] = useState(false);
+    const [boardToDelete, setBoardToDelete] = useState<Board | null>();
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
 
     const board = boards.find(b => b.boardId === boardId);
@@ -35,8 +42,19 @@ const Boards = () => {
             }
 
             setIsEditing(false);
-
         }
+    };
+
+    const handleConfirmDelete = async () => {
+        if (boardToDelete) {
+            await deleteBoard(boardToDelete.boardId);
+            setIsDeleteDialogOpen(false);
+            setBoardToDelete(null);
+        }
+    };
+    const handleCloseDeleteDialog = () => {
+        setIsDeleteDialogOpen(false);     // Close the dialog
+        setBoardToDelete(null);            // Clear the item
     };
 
 
@@ -122,12 +140,24 @@ const Boards = () => {
                         >
                             + Add Board
                         </button>
-
                         <CreateBoardDialog
                             isOpen={isCreateDialogOpen}
                             onClose={() => setIsCreateDialogOpen(false)}
                             board={board}
                             isEditing={isEditing}
+                        />
+                        <button onClick={() => {
+                            setBoardToDelete(board)
+                            setIsDeleteDialogOpen(true)
+                        }
+                        }>
+                            <TrashIcon className="w-6 h-6 text-white"/>
+                        </button>
+                        <DeleteDialog
+                            isOpen={isDeleteDialogOpen}
+                            item={boardToDelete as Board}
+                            onClose={handleCloseDeleteDialog}
+                            onConfirm={handleConfirmDelete}
                         />
                     </div>
                 </div>
