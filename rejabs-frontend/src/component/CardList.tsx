@@ -75,14 +75,14 @@ const CardList = ({listId}: { listId: string }) => {
                 <PlusIcon className="h-4 w-4 mr-1"/>
                 Add Card
             </button>
-            <div
+            <button
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDropOnDelete}
-                role="button"
+                type="button"
                 className="fixed bottom-6 right-6 w-16 h-16 bg-red-600 hover:bg-red-700 text-white flex items-center justify-center rounded-full shadow-lg z-50"
             >
                 <TrashIcon className="w-6 h-6"/>
-            </div>
+            </button>
             <DeleteDialog
                 isOpen={isDeleteDialogOpen}
                 item={cardToDelete as Card}
