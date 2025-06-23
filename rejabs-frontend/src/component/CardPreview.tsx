@@ -38,7 +38,7 @@ const CardPreview = ({card, onClick}: Props) => {
             tabIndex={0}
             draggable
             onDragStart={handleDragStart}
-            style={{ userSelect: "none" }}
+            style={{userSelect: "none"}}
             onClick={onClick}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -49,7 +49,7 @@ const CardPreview = ({card, onClick}: Props) => {
         >
             <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium text-gray-800 truncate">{card.cardTitle}</h3>
-                <PencilIcon className="h-4 w-4" onClick={onClick} draggable={false}></PencilIcon>
+                <PencilIcon className="h-4 w-4" onClick={onClick} ></PencilIcon>
             </div>
             <div>
                 <p className="text-sm text-gray-600 truncate my-4">{card.description}</p>

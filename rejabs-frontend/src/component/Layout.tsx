@@ -9,8 +9,8 @@ const Layout = () => {
     const navigate = useNavigate();
     const [openUserMenu, setOpenUserMenu] = useState(false);
     const [openBoardsMenu, setOpenBoardsMenu] = useState(false);
-    const menuRef = useRef<HTMLDivElement |undefined>(undefined); // For user menu
-    const boardsMenuRef = useRef<HTMLDivElement|undefined>(undefined);
+    const menuRef = useRef<HTMLDivElement |null>(null); // For user menu
+    const boardsMenuRef = useRef<HTMLDivElement|null>(null);
 
     const {boards} = useBoard();
 
