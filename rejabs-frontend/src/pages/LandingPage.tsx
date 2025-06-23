@@ -13,17 +13,18 @@ const LandingPage = () => {
                 </div>
             </header>
             <section className="flex flex-1 flex-col items-center justify-center text-center py-20 px-6">
-                <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                    Welcome to the landing page
-                </h2>
+                <h2 className="text-5xl md:text-5xl font-bold mb-4">Quick jabs at your tasks</h2>
+                <h3 className="text-3xl md:text-5xl font-bold mb-4">
+                    Organize your work and life with ease
+                </h3>
                 <p className="text-lg text-gray-600 max-w-xl mb-8">
-                    A tool to manage boards and tasks.
+                    A Trello-inspired productivity tool to manage boards, tasks, and teams — beautifully and simply.
                 </p>
                 <Link
                     to="/signup"
                     className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700 transition"
                 >
-                    Try It
+                Try It
                 </Link>
             </section>
             <footer className="bg-gray-500 text-gray-50 py-3 px-6 text-center">
