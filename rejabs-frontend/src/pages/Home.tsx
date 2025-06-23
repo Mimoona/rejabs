@@ -39,8 +39,8 @@ const Home = () => {
                         <ResponsiveContainer width="100%" height={200}>
                             <PieChart>
                                 <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={80}>
-                                    {pieData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color}/>
+                                    {pieData.map((entry) => (
+                                        <Cell key={`cell-${entry.name}`} fill={entry.color}/>
                                     ))}
                                 </Pie>
                                 <Tooltip/>

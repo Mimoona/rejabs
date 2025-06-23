@@ -5,8 +5,7 @@ import {useBoard} from "../hooks/useBoard.ts";
 import {UserIcon, UserPlusIcon} from "@heroicons/react/16/solid";
 import type {Board, Collaborator} from "../types/Board.ts";
 import BoardList from "../component/BoardList.tsx";
-import {ExclamationCircleIcon} from "@heroicons/react/24/outline";
-import {TrashIcon} from "@heroicons/react/24/outline";
+import {ExclamationCircleIcon, TrashIcon} from "@heroicons/react/24/outline";
 import DeleteDialog from "../component/DeleteDialog.tsx";
 
 

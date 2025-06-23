@@ -14,10 +14,15 @@ interface DeleteDialogProps {
 const DeleteDialog = ({isOpen, onClose, item, onConfirm}: DeleteDialogProps) => {
     if (!item) return null;
 
-    const itemTitle = (item && 'title' in item) ? item.title
-        : item && 'listTitle' in item ? item.listTitle
-            : item && 'cardTitle' in item ? item.cardTitle
-                : 'untitled';
+    let itemTitle = 'untitled';
+
+    if (item && 'title' in item) {
+        itemTitle = item.title;
+    } else if (item && 'listTitle' in item) {
+        itemTitle = item.listTitle;
+    } else if (item && 'cardTitle' in item) {
+        itemTitle = item.cardTitle;
+    }
 
 
     return (

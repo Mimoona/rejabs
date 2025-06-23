@@ -78,6 +78,7 @@ const CardList = ({listId}: { listId: string }) => {
             <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDropOnDelete}
+                role="button"
                 className="fixed bottom-6 right-6 w-16 h-16 bg-red-600 hover:bg-red-700 text-white flex items-center justify-center rounded-full shadow-lg z-50"
             >
                 <TrashIcon className="w-6 h-6"/>
