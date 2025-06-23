@@ -7,6 +7,7 @@ import type {Board, Collaborator} from "../types/Board.ts";
 import BoardList from "../component/BoardList.tsx";
 import {ExclamationCircleIcon, TrashIcon} from "@heroicons/react/24/outline";
 import DeleteDialog from "../component/DeleteDialog.tsx";
+import {usernameToColor} from "../utility/GenerateUserColor.ts";
 
 
 
@@ -101,16 +102,29 @@ const Boards = () => {
                         <div className="flex -space-x-2">
 
                             {board.collaborators?.length > 0 ? (
-                                board.collaborators.map((collaborator: Collaborator) => (
-                                    <img
-                                        key={collaborator.collaboratorEmail}
-                                        src={collaborator.collaboratorAvatar || collaborator.collaboratorName}
-                                        alt={collaborator.collaboratorName}
-                                        className="w-9 h-9 rounded-full border-2 border-white bg-gray-200"
-                                        title={collaborator.collaboratorName}
-                                    />
-                                ))
-                            ) : (
+                                board.collaborators.map((collaborator: Collaborator) => {
+                                    const initial = collaborator.collaboratorName?.charAt(0).toUpperCase() || "?";
+                                    const bgColor = usernameToColor(collaborator.collaboratorName || "default");
+
+                                    return collaborator.collaboratorAvatar ? (
+                                        <img
+                                            key={collaborator.collaboratorEmail}
+                                            src={collaborator.collaboratorAvatar}
+                                            alt={collaborator.collaboratorName}
+                                            className="w-9 h-9 rounded-full border-2 border-white bg-gray-200"
+                                            title={collaborator.collaboratorName}
+                                        />
+                                    ) : (
+                                        <div
+                                            key={collaborator.collaboratorEmail}
+                                            className="w-9 h-9 rounded-full border-2 border-white bg-gray-400 flex items-center justify-center text-white font-semibold"
+                                            title={collaborator.collaboratorName}
+                                            style={{ backgroundColor: bgColor }}
+                                        >
+                                            {initial}
+                                        </div>
+                                    );
+                                })) : (
                                 <div
                                     className="w-9 h-9 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center">
                                     <UserIcon className="h-5 w-5 text-gray-500"/>
@@ -165,7 +179,7 @@ const Boards = () => {
             {/* Board Content */}
 
             <div
-                className="bg-gradient-to-t from-gray-800 via-gray-500 to-gray-300 flex-1 overflow-x-auto px-6 py-4 rounded-lg mt-2">
+                className="bg-gradient-to-t from-gray-800 via-gray-500 to-gray-300 flex-1 overflow-x-auto px-4 py-4 rounded-lg mt-2">
                 <BoardList/>
             </div>
         </div>

@@ -107,7 +107,7 @@ export default function BoardList() {
     // For list scroll controls
     const scroll = (direction: "left" | "right") => {
         if (!scrollRef.current) return;
-        const scrollAmount = 300; // px
+        const scrollAmount = 375; // px
         scrollRef.current.scrollBy({
             left: direction === "right" ? scrollAmount : -scrollAmount,
             behavior: "smooth",
@@ -138,7 +138,7 @@ export default function BoardList() {
             {/* Scrollable list container */}
             <div
                 ref={scrollRef}
-                className="flex gap-4 w-full left-0 overflow-x-auto pb-4 px-9 scroll-smooth hide-scrollbar items-start"
+                className="flex gap-4 w-full left-0 overflow-x-auto pb-4 mx-8 scroll-smooth hide-scrollbar items-start"
                 style={{scrollBehavior: "smooth"}}
             >
 
@@ -146,7 +146,7 @@ export default function BoardList() {
                 {currentBoardLists.map(list => (
                     <div
                         key={list.boardListId}
-                        className="w-80 bg-white rounded-2xl shadow p-4 flex flex-col"
+                        className="min-w-[20rem] w-80 bg-white rounded-2xl shadow p-4 flex flex-col"
                     >
                         <div className="flex items-center justify-between w-full mb-3">
 

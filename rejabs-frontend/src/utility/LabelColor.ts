@@ -2,7 +2,7 @@ export const getColorFromLabel = (label: string) => {
     const labelColors: Record<string, string> = {
         HIGH_PRIORITY: "red",
         MEDIUM_PRIORITY: "coral",
-        LOW_PRIORITY: "yellow",
+        LOW_PRIORITY: "#4ade80",
         DESIGN: "purple",
         BACKEND: "green",
         FRONTEND: "orange",

@@ -66,10 +66,11 @@ const CardPreview = ({card, onClick}: Props) => {
 
                 {card.dueDate && (
                     <span title={card.dueDate}>
-            <CalendarIcon className="w-4 h-4 text-gray-500"/>
-
-          </span>
+                        <CalendarIcon className="w-4 h-4 text-gray-500"/>
+                    </span>
                 )}
+                <span className="text-xs text-gray-500 ">{new Date(card.dueDate).toLocaleDateString()}</span>
+                {/*<span>{card.updatedAt}</span>*/}
             </div>
         </div>
     );
