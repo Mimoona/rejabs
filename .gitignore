@@ -12,7 +12,6 @@
 /rejabs-backend/mvnw.cmd
 /rejabs-backend/.mvn
 /rejabs-backend/src/main/resources/application-dev.properties
-/rejabs-backend/src/main/resources/application-prod.properties
 
 #Frontend
 
