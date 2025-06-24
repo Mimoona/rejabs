@@ -3,6 +3,5 @@ export const usernameToColor = (str: string) => {
     for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
-    const color = `hsl(${hash % 360}, 60%, 70%)`; // HSL for pastel colors
-    return color;
+    return `hsl(${hash % 360}, 60%, 70%)`; // HSL for pastel colors;
 };
