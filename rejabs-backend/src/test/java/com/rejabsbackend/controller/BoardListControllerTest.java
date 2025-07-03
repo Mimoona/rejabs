@@ -5,6 +5,7 @@ import com.rejabsbackend.dto.BoardListDto;
 import com.rejabsbackend.model.BoardList;
 import com.rejabsbackend.repo.BoardListRepository;
 import com.rejabsbackend.service.IdService;
+import com.rejabsbackend.testsupport.SecurityTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,14 +55,16 @@ class BoardListControllerTest {
     @Test
     void getAllBoardLists_shouldReturnBoardLists_whenCalled() throws Exception{
         boardListRepository.save(boardList);
-        mockMvc.perform(get("/api/board-list"))
+        mockMvc.perform(get("/api/board-list")
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(boardList))));
     }
 
     @Test
     void getAllBoardLists_shouldReturnEmptyList_whenCalled() throws Exception {
-        mockMvc.perform(get("/api/board-list"))
+        mockMvc.perform(get("/api/board-list")
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
@@ -69,7 +72,8 @@ class BoardListControllerTest {
     @Test
     void getBoardListById_shouldReturnBoardList_whenCalledWithValidId() throws Exception{
         boardListRepository.save(boardList);
-        mockMvc.perform(get("/api/board-list/"+boardList.boardListId()))
+        mockMvc.perform(get("/api/board-list/"+boardList.boardListId())
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(boardList)));
     }
@@ -77,7 +81,8 @@ class BoardListControllerTest {
     @Test
     void getBoardListById_shouldThrowException_whenCalledWithInvalidId() throws Exception {
         String invalidId = "xyz22";
-        mockMvc.perform(get("/api/board-list/"+invalidId))
+        mockMvc.perform(get("/api/board-list/"+invalidId)
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Board List Id " + invalidId + " not found"));
     }
@@ -87,7 +92,8 @@ class BoardListControllerTest {
     void createBoardList_shouldReturnNewBoardList_whenCalledWithValidData() throws Exception{
         mockMvc.perform(post("/api/board-list/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(boardListDto)))
+                        .content(objectMapper.writeValueAsString(boardListDto))
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.boardListId").isNotEmpty())
                 .andExpect(content().json(objectMapper.writeValueAsString(boardListDto)));
@@ -99,7 +105,8 @@ class BoardListControllerTest {
         //When
         mockMvc.perform(put("/api/board-list/"+boardList.boardListId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateBoardListDto)))
+                        .content(objectMapper.writeValueAsString(updateBoardListDto))
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(updateBoardListDto)));
     }
@@ -108,7 +115,8 @@ class BoardListControllerTest {
     void deleteBoardList_shouldDeleteBoardList_whenCalledWithValidId() throws Exception {
         boardListRepository.save(boardList);
         //when
-        mockMvc.perform(delete("/api/board-list/" + boardList.boardListId()))
+        mockMvc.perform(delete("/api/board-list/" + boardList.boardListId())
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk());
     }
 
@@ -116,7 +124,8 @@ class BoardListControllerTest {
     void deleteBoardList_shouldThrowException_whenCalledWithInvalidId() throws Exception {
         String invalidId = "xyz22";
         //when
-        mockMvc.perform(delete("/api/board-list/"+invalidId))
+        mockMvc.perform(delete("/api/board-list/"+invalidId)
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Board List Id " + invalidId + " not found"));
     }

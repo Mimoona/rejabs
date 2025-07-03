@@ -2,6 +2,7 @@ package com.rejabsbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rejabsbackend.dto.BoardDto;
+import com.rejabsbackend.enums.AuthProvider;
 import com.rejabsbackend.model.AppUser;
 import com.rejabsbackend.model.Board;
 import com.rejabsbackend.model.Collaborator;
@@ -9,6 +10,7 @@ import com.rejabsbackend.repo.AppUserRepository;
 import com.rejabsbackend.repo.BoardRepository;
 
 import com.rejabsbackend.service.IdService;
+import com.rejabsbackend.testsupport.SecurityTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,6 +27,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -58,9 +61,9 @@ class BoardControllerTest {
 
     @BeforeEach
     void setUp() {
-        user = new AppUser(1234, "testUser", "mock@example.com", "http://image.png");
+        user = new AppUser("1234", "testUser", "mock@example.com", "password","http://image.png", AuthProvider.GITHUB);
 
-        board = new Board("board123", "Project A", "1234", List.of(
+        board = new Board("board123", "Project A", "12345", List.of(
                 new Collaborator("collab1", "John Doe", "john@example.com", "avatar1.jpg")
         ));
 
@@ -77,27 +80,19 @@ class BoardControllerTest {
 
     }
 
-    protected RequestPostProcessor getOidcLogin() {
-        return oidcLogin().userInfoToken(token -> token
-                .claim("id", 1234)
-                .claim("login", "testUser")
-                .claim("email", "mock@example.com")
-                .claim("avatar_url", "http://image.png")
-        );
-    }
-
-
     @Test
     void getAllBoards_shouldReturnListOfBoards_whenCalled() throws Exception {
         boardRepository.save(board);
-        mockMvc.perform(get("/api/boards"))
+        mockMvc.perform(get("/api/boards")
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(List.of(board))));
     }
 
     @Test
     void getAllBoards_shouldReturnEmptyList_whenCalled() throws Exception {
-        mockMvc.perform(get("/api/boards"))
+        mockMvc.perform(get("/api/boards")
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
@@ -105,7 +100,8 @@ class BoardControllerTest {
     @Test
     void getBoardById_shouldReturnBoard_whenCalledWithValidId() throws Exception {
         boardRepository.save(board);
-        mockMvc.perform(get("/api/boards/"+board.boardId()))
+        mockMvc.perform(get("/api/boards/"+board.boardId())
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(board)));
     }
@@ -113,7 +109,8 @@ class BoardControllerTest {
     @Test
     void getBoardById_shouldThrowException_whenCalledWithInvalidId() throws Exception {
         String invalidId = "xyz22";
-        mockMvc.perform(get("/api/boards/"+invalidId))
+        mockMvc.perform(get("/api/boards/"+invalidId)
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Board Id " + invalidId + " not found"));
     }
@@ -125,7 +122,7 @@ class BoardControllerTest {
        MvcResult result =  mockMvc.perform(post("/api/boards")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(boardDto))
-                        .with(getOidcLogin()))
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.boardId").isNotEmpty())
                 .andExpect(jsonPath("$.collaborators[0].collaboratorId").isNotEmpty())
@@ -154,7 +151,7 @@ class BoardControllerTest {
 
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto))
-                        .with(getOidcLogin()))
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(updatedBoard)));
     }
@@ -164,7 +161,7 @@ class BoardControllerTest {
         boardRepository.save(board);
         //when
         mockMvc.perform(delete("/api/boards/" + board.boardId())
-                        .with(getOidcLogin()))
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk());
     }
 
@@ -172,7 +169,8 @@ class BoardControllerTest {
     void deleteBoard_shouldThrowException_whenCalledWithInvalidId() throws Exception {
         String invalidId = "xyz22";
         //when
-        mockMvc.perform(delete("/api/boards/"+invalidId))
+        mockMvc.perform(delete("/api/boards/"+invalidId)
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Board Id " + invalidId + " not found"));
     }

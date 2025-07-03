@@ -8,6 +8,7 @@ import com.rejabsbackend.enums.Label;
 import com.rejabsbackend.model.Card;
 import com.rejabsbackend.repo.CardRepository;
 import com.rejabsbackend.service.IdService;
+import com.rejabsbackend.testsupport.SecurityTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +126,8 @@ class CardControllerTest {
     @Test
     void getAllCards_shouldReturnCards_whenCalled() throws Exception {
         cardRepository.save(card);
-        mockMvc.perform(get("/api/cards"))
+        mockMvc.perform(get("/api/cards")
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].cardId").value(card.cardId()))
                 .andExpect(jsonPath("$[0].cardTitle").value(card.cardTitle()))
@@ -139,7 +141,8 @@ class CardControllerTest {
     }
     @Test
     void getAllCards_shouldReturnEmptyList_whenCalled() throws Exception {
-        mockMvc.perform(get("/api/cards"))
+        mockMvc.perform(get("/api/cards")
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
@@ -147,7 +150,8 @@ class CardControllerTest {
     @Test
     void getCardById_shouldReturnCard_whenCalledWithValidId() throws Exception {
         cardRepository.save(card);
-        mockMvc.perform(get("/api/cards/"+card.cardId()))
+        mockMvc.perform(get("/api/cards/"+card.cardId())
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cardId").value(card.cardId()))
                 .andExpect(jsonPath("$.cardTitle").value(card.cardTitle()))
@@ -162,7 +166,8 @@ class CardControllerTest {
     @Test
     void getCardById_shouldThrowException_whenCalledWithInvalidId() throws Exception {
         String invalidId = "xyz22";
-        mockMvc.perform(get("/api/cards/"+invalidId))
+        mockMvc.perform(get("/api/cards/"+invalidId)
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Card Id " + invalidId + " not found"));
     }
@@ -172,7 +177,8 @@ class CardControllerTest {
     void createCard_shouldReturnNewCard_whenCalledWithValidData() throws Exception {
         mockMvc.perform(post("/api/cards/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(cardDto)))
+                        .content(mapper.writeValueAsString(cardDto))
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cardId").isNotEmpty())
                 .andExpect(jsonPath("$.cardTitle").value(cardDto.cardTitle()))
@@ -190,7 +196,8 @@ class CardControllerTest {
         //When
         mockMvc.perform(put("/api/cards/"+card.cardId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(updateCardDto)))
+                        .content(mapper.writeValueAsString(updateCardDto))
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cardTitle").value(updateCardDto.cardTitle()))
                 .andExpect(jsonPath("$.description").value(updateCardDto.description()))
@@ -204,14 +211,16 @@ class CardControllerTest {
     void deleteCard_shouldDeleteCard_whenCalledWithValidId() throws Exception  {
         cardRepository.save(card);
         //when
-        mockMvc.perform(delete("/api/cards/" + card.cardId()))
+        mockMvc.perform(delete("/api/cards/" + card.cardId())
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isOk());
     }
     @Test
     void deleteCard_shouldThrowException_whenCalledWithInvalidId() throws Exception {
         String invalidId = "xyz22";
         //when
-        mockMvc.perform(delete("/api/cards/"+invalidId))
+        mockMvc.perform(delete("/api/cards/"+invalidId)
+                        .with(SecurityTestSupport.getOAuthLogin()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Card Id " + invalidId + " not found"));
     }

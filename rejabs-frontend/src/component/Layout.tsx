@@ -102,7 +102,7 @@ const Layout = () => {
                                 {openUserMenu && (
                                     <div
                                         className="absolute right-0 mt-2 w-40 bg-white text-gray-800 rounded shadow-lg z-50">
-                                        <span className="block px-4 py-2 hover:bg-gray-100">{user.login}</span>
+                                        <span className="block px-4 py-2 hover:bg-gray-100">{user.username}</span>
                                         <Link
                                             to="/profile"
                                             className="block px-4 py-2 hover:bg-gray-100"
