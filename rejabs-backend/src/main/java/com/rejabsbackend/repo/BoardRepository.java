@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface BoardRepository extends MongoRepository<Board, String> {
-    List<Board> findByOwnerId(String ownerId); // optional custom method
+    List<Board> findAllByOwnerId(String ownerId);
 }

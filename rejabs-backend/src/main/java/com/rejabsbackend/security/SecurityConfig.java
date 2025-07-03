@@ -72,11 +72,11 @@ public class SecurityConfig {
 
                 // Logout Configuration
                 .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout") // Endpoint to call from my frontend
+                        .logoutUrl("/api/auth/logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .logoutSuccessHandler((request, response, authentication) ->
-                                response.setStatus(HttpServletResponse.SC_OK) // Simple success response
+                                response.setStatus(HttpServletResponse.SC_OK)
                         )
                 )
 

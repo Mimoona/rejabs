@@ -34,35 +34,8 @@ public class AuthService {
         this.idService =idService;
     }
 
-//    public ResponseEntity<Map<String,Object>> saveUser(OAuth2User oAuth2User) throws AuthenticationException {
-//
-//        Integer githubId = oAuth2User.getAttribute("id");
-//        if (githubId == null) {
-//            throw new AuthenticationException("GitHub ID not found in OAuth2 attributes");
-//        }
-//
-//        String username = oAuth2User.getAttribute("login");
-//        String email = oAuth2User.getAttribute("email");
-//        String avatarUrl = oAuth2User.getAttribute("avatar_url");
-//
-//        // Convert ID to String
-//        String userId = githubId.toString();
-//        // If user exist already in DB
-//        AppUser user = appUserRepo.findById(userId).orElseGet(() -> {
-//            AppUser newUser = new AppUser(userId, username, email, null, avatarUrl, AuthProvider.GITHUB);
-//            return appUserRepo.save(newUser);
-//        });
-//
-//        String token = jwtService.generateToken(new CustomUserDetails(user));
-//        return ResponseEntity.ok(Map.of("user", user,"token", token));
-//
-//    }
 
     public boolean isUserAuthenticated() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        return authentication != null &&
-//                authentication.isAuthenticated() &&
-//                authentication.getPrincipal() instanceof OAuth2User;
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -108,22 +81,6 @@ public class AuthService {
         else {
             throw new AuthenticationException("Unknown principal type: " + principal.getClass());
         }
-
-//        try {
-//            OAuth2User user = (OAuth2User) SecurityContextHolder.getContext()
-//                    .getAuthentication()
-//                    .getPrincipal();
-//
-//            Object idAttribute = user.getAttribute("id");
-//
-//            if (idAttribute == null) {
-//                throw new AuthenticationException("User ID not found in OAuth2 attributes");
-//            }
-//
-//            return idAttribute.toString();
-//        } catch (Exception e) {
-//            throw new AuthenticationException("Failed to get current user ID: " + e.getMessage());
-//        }
     }
 
     public ResponseEntity<Map<String, Object>> register(UserRegisterDto registerDto) throws ConflictException {
