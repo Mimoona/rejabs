@@ -3,11 +3,15 @@ import {useAuth} from "../hooks/useAuth.ts";
 
 
 export default function ProtectedRoute() {
-    const { user } = useAuth();
+    const { user, isLoading } = useAuth();
 
-    if (user === undefined) {
-        return <h3>Loading...</h3>; // waiting for auth check
+    if (isLoading) {
+        return <h3>Loading...</h3>; // still checking token or OAuth state
     }
 
-    return user ? <Outlet /> : <Navigate to="/" replace />;
+    if (!user) {
+        return <Navigate to="/" replace />;
+    }
+
+    return <Outlet />;
 }

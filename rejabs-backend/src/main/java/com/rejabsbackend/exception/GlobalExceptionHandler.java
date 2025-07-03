@@ -13,6 +13,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionMessage> handleUnknownException(Exception e){
+        e.printStackTrace();
         ExceptionMessage error = new ExceptionMessage( e.getMessage(),
                 Instant.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.name());
@@ -21,6 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IdNotFoundException.class)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(IdNotFoundException e){
+        e.printStackTrace();
         ExceptionMessage error = new ExceptionMessage(e.getMessage(),
                 Instant.now(),
                 HttpStatus.NOT_FOUND.name());
@@ -29,10 +31,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ExceptionMessage> handleAuthenticationException(AuthenticationException e){
+        e.printStackTrace();
         ExceptionMessage error = new ExceptionMessage(e.getMessage(),
                 Instant.now(),
-                HttpStatus.NOT_FOUND.name());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+                HttpStatus.UNAUTHORIZED.name());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ExceptionMessage> handleConflictException(ConflictException e){
+        e.printStackTrace();
+        ExceptionMessage error = new ExceptionMessage(e.getMessage(),
+                Instant.now(),
+                HttpStatus.CONFLICT.name());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
 

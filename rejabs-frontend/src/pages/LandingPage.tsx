@@ -1,15 +1,12 @@
 import {Link} from "react-router-dom";
-import {useAuth} from "../hooks/useAuth.ts";
 
 const LandingPage = () => {
-    const {login} = useAuth();
-
     return (
         <div className="flex flex-col min-h-screen">
             <header className="bg-gray-500 text-gray-50 py-4 px-6 shadow-md">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <button className="hover:underline">ReJaBs</button>
-                    <button onClick={login} className="hover:underline">Sign-in</button>
+                    <Link to="/signin" className="hover:underline">Sign-in</Link>
                 </div>
             </header>
             <section className="flex flex-1 flex-col items-center justify-center text-center py-20 px-6">
@@ -28,7 +25,7 @@ const LandingPage = () => {
                 </Link>
             </section>
             <footer className="bg-gray-500 text-gray-50 py-3 px-6 text-center">
-                &copy; {new Date().getFullYear()} ReJaBs.
+                &copy; {new Date().getFullYear()} ReJaBs. All Rights Reserved.
             </footer>
         </div>
     );

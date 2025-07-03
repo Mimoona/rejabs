@@ -26,7 +26,8 @@ public class BoardService {
 
 
     public List<Board> getAllBoards() {
-        return boardRepository.findAll();
+        String userId = authService.getCurrentUserId();
+        return boardRepository.findAllByOwnerId(userId);
     }
 
     public Board getBoardById(String boardId) throws IdNotFoundException {

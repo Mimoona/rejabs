@@ -8,16 +8,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private final JwtAuthenticationFilter jwtFilter;
+    private final CustomOAuthSuccessHandler customOAuthSuccessHandler;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter, CustomOAuthSuccessHandler successHandler) {
+        this.jwtFilter = jwtFilter;
+        this.customOAuthSuccessHandler = successHandler;
+
+    }
+
 
     @Value("${app.oauth2.success-url}")
     private String successUrl;
@@ -30,36 +42,64 @@ public class SecurityConfig {
         //List<String> origins = Arrays.asList(allowedOrigins.split(","));
 
         http
+                // CORS Configuration
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of(allowedOrigin));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
                     config.setAllowCredentials(true);
                     return config;
                 }))
-                // Disable CSRF for APIs or frontend integration
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth").authenticated() // Protect specific endpoint
-                        .anyRequest().permitAll()) // Allow everything else
 
+                // Disable CSRF for stateless APIs
+                .csrf(AbstractHttpConfigurer::disable)
+
+                // Authorization Rules
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/oauth2/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
+
+                // OAuth2 Login Configuration
+                .oauth2Login(oauth -> oauth
+                        .successHandler(customOAuthSuccessHandler)
+                )
+
+                // Logout Configuration
                 .logout(logout -> logout
-                        .logoutUrl("/api/logout") // Endpoint to call from frontend
+                        .logoutUrl("/api/auth/logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .logoutSuccessHandler((request, response, authentication) ->
-                            response.setStatus(HttpServletResponse.SC_OK) // Simple success response
+                                response.setStatus(HttpServletResponse.SC_OK)
                         )
                 )
 
-                .oauth2Login(oauth -> oauth
+                // Session Management
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
 
-                        .defaultSuccessUrl(successUrl, true))
-
+                // Exception Handling
                 .exceptionHandling(error -> error
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-        );
+                )
+
+                // JWT Filter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 }
+

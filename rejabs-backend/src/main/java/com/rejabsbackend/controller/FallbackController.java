@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class FallbackController {
 
     @GetMapping(value = {
-            "/", "/signup", "/home", "/profile", "/boards/**"
+            "/", "/signup","/signin","/home", "/profile", "/boards/**"
     })
     public String forward() {
         return "forward:/index.html";

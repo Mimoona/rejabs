@@ -3,9 +3,9 @@ import {useAuth} from "../hooks/useAuth.ts";
 const Profile = () => {
     const {user} = useAuth();
 
-    const name = user?.login ?? "Not Available";
+    const name = user?.username ?? "Not Available";
     const email = user?.email ?? "Not Available";
-    const avatarUrl = user?.avatar_url ?? "/default-avatar.png";
+    const avatarUrl = user?.avatarUrl ?? "/default-avatar.png";
 
 
     return (
